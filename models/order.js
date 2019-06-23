@@ -2,14 +2,14 @@ var mongoose = require('mongoose');
 
 //Schema Setup
 var OrderSchema = new mongoose.Schema({
-    custName: String,
-    orderType: String,
-    phoneNum: Number,
-    isBuying: Boolean,
-    orderDate: Date,
-    orderCode: String,
-    orderStatus: String,
-    orderDetail: Array
+    custName: String, // Name Customer
+    orderType: String,// Skema Harga (20gros, dll)
+    phoneNum: Number, // No Telp
+    isBuying: Boolean,// Pembelian atau Penjualan
+    orderDate: Date,  // Estimasi tanggal kedatangan
+    orderCode: String,// Random String
+    orderStatus: String, // Status pesanan, di edit di /order/:id/edit
+    orderDetail: Array  //Detail pesanan
 });
 
 module.exports = mongoose.model("Order", OrderSchema);

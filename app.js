@@ -44,13 +44,16 @@ seedDB();
 // INDEX - Universal Login Page
 app.get('/',function (req,res) {
    res.render('login');
+   console.log("login page");
 });
 
 // INDEX - Admin Page
 app.get('/admin',function (req,res) {
    res.render('admin/index');
+   console.log("Admin Page");
 });
 
+//========= MENU ROUTE =============================
 // INDEX - Menu List Page
 app.get('/admin/menu',function (req,res) {
     Menu.find({},function(err, menus){
@@ -73,15 +76,48 @@ app.post('/admin/menu',function (req,res) {
         if(err){
             console.log(err);
         } else {
+            // ADD DO NOT OVERWRITE
             console.log("New Menu : " + req.body.menu.name);
             res.redirect('/admin/menu');
         }
    });
 });
 
-app.get('/admin/order/new',function (req,res) {
-   res.render('admin/newOrder');
+// Edit
+// Update
+// Destroy
+
+
+//========= ORDER ROUTE ============================
+//INDEX - Show all orders
+app.get('/admin/order/',function (req,res) {
+   res.render('admin/orderIndex');
 });
+
+
+//NEW - Submit New Order 
+app.get('/admin/order/new',function (req,res) {
+    Menu.find({}, function(err, menus){
+        if(err){console.log(err);} else {
+            res.render('admin/newOrder', {menus : menus});
+            console.log("Adding new order...");
+        }
+    });
+});
+
+//CREATE
+app.post('/admin/order',function (req,res) {
+    var customerInfo = req.body.order;
+    var orderDetail = req.body.orderDetail;
+    res.send(customerInfo + orderDetail);
+    console.log(customerInfo);
+    console.log(orderDetail);
+});
+
+//SHOW
+//EDIT
+//UPDATE
+//DESTROY
 
 
 //404 Handler
@@ -95,13 +131,6 @@ console.log('rjdPOS is listening on port ' + port);
 });
 
 /*NOTES
-DB model would be
-setiap rasa punya entrynya sendiri di db.menus
-
-Kemudian, setiap kali ada order masuk atau keluar, jumlahnya akan mempengaruhi jumlah
-db.menus.stock
-
-kemudian untuk membuat histori order, kita bisa gunakan association dari db.menus ke
-db.orders
-
+DB Model antara Menus dan Orders akan dipisah aja. 
+mereka cuman terhubung pas ada transaksi terjadi
 */
