@@ -1,10 +1,28 @@
-<h1>Login Home page</h1>
+<% include partials/headerNoNav %>
 
-<form action="" method="post">
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" placeholder="password">
-</form>
+<div class="container">
+    <div class="row text-center">
+        <h1>RoyalPOS</h1>
+        <div class="col-md-12">
+            <form action="/login" method="post">
+                <div class="input-group col-md-12">
+                    <input class="form-control" type="text" name="username" placeholder="username">
+                </div>
+                <div class="input-group col-md-12">
+                    <input type="password" class="form-control" name="password" placeholder="password">
+                </div>
+            </form>
 
-<a href="/admin">Go To Admin Page</a>
+            <a class="btn btn-primary" href="/admin">Go To Admin Page</a>
 
-<a href="#">Go To Customer Area</a>
+            <a class="btn btn-default" href="#">Go To Customer Area</a>
+        </div>
+        
+    </div>
+</div>
+
+
+
+
+
+<% include partials/footer %>
