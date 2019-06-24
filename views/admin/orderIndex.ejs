@@ -1,1 +1,35 @@
-<h1>Order Index Page</h1>
+<% include ../partials/header %>
+
+<div class="container">
+    <h1>Order Index Page</h1>
+
+    <% orders.forEach(function(order){%>
+        <div class="thumbnail">
+            <h2><%=order.custName%></h2>
+            <h4><%=order.phoneNum%></h4>
+            <p><%=order.orderDate%></p>
+            <p><%=order.orderType%></p>
+
+            <table class="table">
+                <tr>
+                    <% menus.forEach(function(menu){%>
+                    <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
+                    <%});%>
+                </tr>
+                <tr>
+                    <% menus.forEach(function(menu){%>
+                        <td><%=menu.emoji%></td>
+                    <%});%>
+                </tr>
+                <tr>
+                    <% menus.forEach(function(menu){%>
+                        <td><%=order.orderDetail[menu.name]%></td>
+                    <%});%>
+                </tr>
+            </table>
+            <a class="btn btn-primary" href="/admin/order/<%=order._id%>">Detail</a>
+        </div>
+    <%})%>
+    
+</div>
+<% include ../partials/footer %>

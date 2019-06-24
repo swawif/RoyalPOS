@@ -145,7 +145,15 @@ app.delete('/admin/menu/:id',function (req,res) {
 //========= ORDER ROUTE ============================
 //INDEX - Show all orders
 app.get('/admin/order/',function (req,res) {
-   res.render('admin/orderIndex');
+    Order.find({},(err, orders)=>{
+        if(err){console.log(err)} else {
+            Menu.find({},(err,menus)=>{
+                if(err){console.log(err)} else {
+                    res.render('admin/orderIndex', {orders:orders, menus:menus});
+                }
+            });
+        }
+    });
 });
 
 
@@ -161,11 +169,21 @@ app.get('/admin/order/new',function (req,res) {
 
 //CREATE
 app.post('/admin/order',function (req,res) {
-    var customerInfo = req.body.order;
     var orderDetail = req.body.orderDetail;
-    res.send(customerInfo + orderDetail);
-    console.log(customerInfo);
-    console.log(orderDetail);
+    var newOrderObj = req.body.order;
+    newOrderObj.orderDetail = orderDetail;
+    if (newOrderObj.isBuying === "on"){
+        newOrderObj.isBuying = true;
+    } else if(newOrderObj.isBuying === undefined) {
+        newOrderObj.isBuying = false;
+    }
+    Order.create(newOrderObj, function(err, newOrder){
+        if(err){console.log(err);} else {
+            console.log("new order!");
+            console.log(newOrder);
+            res.redirect('/admin/order');
+        }
+    });
 });
 
 //SHOW

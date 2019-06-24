@@ -82,6 +82,25 @@ var menuData= [
     }
 ];
 
+// var orderData = [
+//     {
+//         custName: "Arif",
+//         orderType: "20Gros",
+//         phoneNum: 081212493669,
+//         isBuying: false,
+//         orderDate: 2019-06-19T00:00:00.000Z,
+//         orderCode: "NDYTS",
+//         orderStatus: "Menunggu Konfirmasi",
+//         orderDetail: {
+//             pisang: '1',
+//             cappucino: '21',
+//             taro: '8',
+//             grape: '2',
+//             kopi: '8'
+//         }
+//     }
+// ]
+
 function seedDB(){
     //REMOVE EVERYTHING
     Menu.deleteMany({},function(err){
