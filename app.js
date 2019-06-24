@@ -72,15 +72,33 @@ app.get('/admin/menu/new',function (req,res) {
 
 // POST - Process new menu into DB
 app.post('/admin/menu',function (req,res) {
-    Menu.create(req.body.menu, function(err,newMenu){
-        if(err){
-            console.log(err);
-        } else {
-            // ADD DO NOT OVERWRITE
-            console.log("New Menu : " + req.body.menu.name);
-            res.redirect('/admin/menu');
+    // Check if menu existed or not
+    var name = req.body.menu.name.toLowerCase();
+    Menu.findOne({
+        name: name
+    }, (err, foundMenu) => {
+        if(err){console.log(err)} else {
+            // If so, do not overwrite, render the newMenu page with error 
+            if(foundMenu){
+                // render the newMenu page with error (coming soon)
+                // res.render('admin/newMenu', {err: "menuExisted"});
+                res.redirect('/admin/menu')
+                console.log("Menu Existed! : " + foundMenu.name + ", Canceling...");
+            // If not, add the new menu to the 
+            } else if (foundMenu === null) {
+                var newMenu = req.body.menu;
+                newMenu.name = newMenu.name.toLowerCase(); 
+                Menu.create(newMenu, function(err,newMenu){
+                    if(err){
+                        console.log(err);
+                    } else {
+                        console.log("New Menu : " + req.body.menu.name);
+                        res.redirect('/admin/menu');
+                    }
+               });
+            }
         }
-   });
+    });
 });
 
 // Edit

@@ -76,6 +76,7 @@ function seedDB(){
             console.log("Menu is cleared");
             // Add the menus back
             menuData.forEach(function(seed){
+                seed.name = seed.name.toLowerCase();
                 Menu.create(seed, function(err, menu){
                     if(err){console.log(err);} else {
                         console.log('Added menu : ' + menu.name);

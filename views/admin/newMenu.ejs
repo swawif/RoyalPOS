@@ -1,9 +1,15 @@
+<% include ../partials/header %>
+
 <h1>Submit New Menu</h1>
 
 <form action="/admin/menu" method="POST">
-    <input type="text" name="menu[name]" placeholder="Nama Menu">
-    <input type="text" name="menu[emoji]" placeholder="Choose emoji">
+    <input type="text" name="menu[name]" placeholder="Nama Menu" required>
+    <input type="text" name="menu[emoji]" placeholder="Choose emoji" required>
     <label for="stock"></label>
-    <input type="number" name="menu[stock]" id="stock" value="0">
+    <input type="number" name="menu[stock]" id="stock" value="0" required>
     <button>submit</button>
 </form>
+
+<!-- Make error message if menu existed -->
+
+<% include ../partials/footer %>
