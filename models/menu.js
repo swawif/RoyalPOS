@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 //Schema Setup
 var MenuSchema = new mongoose.Schema({
-    name: String,
+    name: {type:String, lowercase: true},
     emoji: String,
     stock: Number
 });

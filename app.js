@@ -86,9 +86,7 @@ app.post('/admin/menu',function (req,res) {
                 console.log("Menu Existed! : " + foundMenu.name + ", Canceling...");
             // If not, add the new menu to the 
             } else if (foundMenu === null) {
-                var newMenu = req.body.menu;
-                newMenu.name = newMenu.name.toLowerCase(); 
-                Menu.create(newMenu, function(err,newMenu){
+                Menu.create(req.body.menu, function(err,newMenu){
                     if(err){
                         console.log(err);
                     } else {
