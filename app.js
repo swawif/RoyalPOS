@@ -7,6 +7,7 @@ var express         = require("express"),
     passport        = require('passport'),
     LocalStrategy   = require('passport-local'),
     config          = require('./config.json'),
+    methodOverride  = require('method-override'),
     //DB Models
     Menu            = require('./models/menu'),
     Order           = require('./models/order'),
@@ -19,6 +20,7 @@ mongoose.connect("mongodb://localhost/rjd_pos_alpha", {useNewUrlParser:true});
 //===== App Config ======
 app.use(bodyParser.urlencoded({extended:true}));
 app.set("view engine", "ejs");
+app.use(methodOverride('_method'));
 // app.use(express.static(__dirname + "/public"));
 //Passport Config - later
 /*
@@ -77,7 +79,7 @@ app.post('/admin/menu',function (req,res) {
     Menu.findOne({
         name: name
     }, (err, foundMenu) => {
-        if(err){console.log(err)} else {
+        if(err){console.log(err);} else {
             // If so, do not overwrite, render the newMenu page with error 
             if(foundMenu){
                 // render the newMenu page with error (coming soon)
@@ -99,9 +101,40 @@ app.post('/admin/menu',function (req,res) {
     });
 });
 
-// Edit
+// Show/Edit
+app.get('/admin/menu/:id/edit',function (req,res) {
+    Menu.findById(req.params.id, function(err,menu) {
+        if(err){console.log(err); res.redirect('/admin/menu');} else {
+            console.log("Editing menu : " + menu.name);
+            res.render('admin/editMenu', {menu:menu});
+        }
+    });
+});
+
 // Update
+app.put('/admin/menu/:id',function (req,res) {
+    Menu.findByIdAndUpdate(req.params.id, req.body.menu, {new: true}, (err,newMenu) => {
+        if(err){
+            console.log(err);
+        } else {
+            console.log("Updated Menu!");
+            console.log(newMenu);
+            res.redirect('/admin/menu');
+        }
+    });
+});
+
 // Destroy
+app.delete('/admin/menu/:id',function (req,res) {
+    Menu.findByIdAndRemove(req.params.id, (err)=>{
+        if(err){
+            console.log(err);
+        } else {
+            console.log("Deleted menu : " + req.params.id);
+            res.redirect('/admin/menu');
+        }
+    })
+});
 
 
 //========= ORDER ROUTE ============================

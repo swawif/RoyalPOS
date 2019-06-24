@@ -1,3 +1,7 @@
+<% include ../partials/header%>
+<!-- Various EJS Functions -->
+<% include ../helper %>
+
 <h1>Menu Page</h1>
 
 Daftar Menu
@@ -5,8 +9,12 @@ Daftar Menu
 <ul>
     <%menus.forEach(function(menu){%>
         <li>
-            <%=menu.emoji%> - <%=menu.name%> - <%=menu.stock%>
+            <%=menu.emoji%> - <%=capitalize(menu.name)%> - <%=menu.stock%> - <a href="/admin/menu/<%=menu._id%>/edit">Edit</a>
+            <form method="POST" action="/admin/menu/<%=menu._id%>?_method=DELETE"> <button>Delete</button>
+            </form>
         </li>
-    <%})%>
+        <%})%>
 </ul>
 <a href="/admin/menu/new">Submit New Menu</a>
+
+<% include ../partials/footer%>
