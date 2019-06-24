@@ -21,7 +21,7 @@ mongoose.connect("mongodb://localhost/rjd_pos_alpha", {useNewUrlParser:true});
 app.use(bodyParser.urlencoded({extended:true}));
 app.set("view engine", "ejs");
 app.use(methodOverride('_method'));
-// app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/public"));
 //Passport Config - later
 /*
 app.use(require('express-session')({
@@ -51,8 +51,12 @@ app.get('/',function (req,res) {
 
 // INDEX - Admin Page
 app.get('/admin',function (req,res) {
-   res.render('admin/index');
-   console.log("Admin Page");
+    Menu.find({}, (err,menus)=>{
+        if(err){console.log(err);} else{
+            res.render('admin/index', {menus:menus});
+            console.log("Admin Page");
+        }
+    });
 });
 
 //========= MENU ROUTE =============================
@@ -76,6 +80,7 @@ app.get('/admin/menu/new',function (req,res) {
 app.post('/admin/menu',function (req,res) {
     // Check if menu existed or not
     var name = req.body.menu.name.toLowerCase();
+    console.log(req.body.menu);
     Menu.findOne({
         name: name
     }, (err, foundMenu) => {
@@ -111,7 +116,7 @@ app.get('/admin/menu/:id/edit',function (req,res) {
     });
 });
 
-// Update
+// Update -- TODO MAKE DUPLICATE PROTECTION
 app.put('/admin/menu/:id',function (req,res) {
     Menu.findByIdAndUpdate(req.params.id, req.body.menu, {new: true}, (err,newMenu) => {
         if(err){
@@ -174,6 +179,7 @@ app.get('/*',function (req,res) {
    res.send("404, not found!")
 });
 
+//Port Listener
 var port = 3000;
 app.listen(port, function(){
 console.log('rjdPOS is listening on port ' + port);

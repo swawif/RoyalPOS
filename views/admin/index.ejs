@@ -2,12 +2,32 @@
 
 <h1>Admin Page</h1>
 
-<p>tabel kondisi stok</p>
+<div class="container">
+
+    <table class="table">
+        <tr>
+            <% menus.forEach(function(menu){%>
+            <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
+            <%});%>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td><%=menu.emoji%></td>
+            <%});%>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td><%=menu.stock%></td>
+            <%});%>
+        </tr>
+        </table>
+</div>
 
 <ul>
     <li><a href="/admin/order/new">Buat Pesanan baru</a></li>
     <li>Daftar Pesanan</li>
     <li>Tambah Rasa</li>
 </ul>
+
 
 <% include ../partials/footer %>

@@ -4,9 +4,10 @@
 
 <form action="/admin/menu" method="POST">
     <input type="text" name="menu[name]" placeholder="Nama Menu" required>
-    <input type="text" name="menu[emoji]" placeholder="Choose emoji" required>
+    <input data-emojiable="true" data-emoji-input="unicode" type="text" name="menu[emoji]" required>
     <label for="stock"></label>
     <input type="number" name="menu[stock]" id="stock" value="0" required>
+    <input id="color" type="color" name="menu[color]" value="#0000ff">
     <button>submit</button>
 </form>
 

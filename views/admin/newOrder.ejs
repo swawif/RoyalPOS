@@ -1,34 +1,54 @@
 <% include ../partials/header %>
 
+<div class="container">        
 <h1>Buat Pesanan Baru</h1>
 
 <form action="/admin/order" method="POST">
-    RASA
-    <ul>
-    <% menus.forEach(function(menu){%>
-        <li>
-            <label for="<%=menu.name%>"><%= menu.emoji%> - <%= menu.name%></label>
-            <input type="number" name="orderDetail[<%=menu.name%>]" id="<%=menu.name%>">
-        </li>
-    <%})%>
-    </ul>
-
-    Info pemesan : 
+    <table class="table">
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <th><%=menu.name.substring(0,3).toUpperCase()%></th>
+                <%});%>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td><%=menu.emoji%></td>
+            <%});%>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td><%=menu.stock%></td>
+            <%});%>
+        </tr>
+        <tr>
+            <td colspan="100"><strong>YOUR ORDER</strong></td>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td>
+                <input class="orderDetail" type="number" name="orderDetail[<%=menu.name%>]" id="<%=menu.name%>">
+                </td>
+            <%});%>
+        </tr>
+    </table>
+      
+    <p>Info pemesan :</p>
     <input type="text" name="order[custName]" placeholder="Nama Pemesan/Supplier" required>
     <input type="text" name="order[orderType]" placeholder="skema penjualan" required>
     <input type="tel" name="order[phoneNum]" placeholder="No telp" required>
     <input type="checkbox" name="order[isBuying]" placeholder="No telp" id="isBuying">
     <input type="date" name="order[orderDate]" placeholder="Untuk Hari" required>
-
+    
     <!--
-    custName: String,
-    orderType: String,
-    phoneNum: Number,
-    isBuying: Boolean,
-    orderDate: Date,
-    orderCode: String,
-    orderStatus: String,
-    orderDetail: Array -->
-
-    <button class="btn btn-primary">Order!</button>
-</form>
+        custName: String,
+        orderType: String,
+        phoneNum: Number,
+        isBuying: Boolean,
+        orderDate: Date,
+        orderCode: String,
+        orderStatus: String,
+        orderDetail: Array -->
+        
+        <button class="btn btn-primary">Order!</button>
+    </form>
+</div>
