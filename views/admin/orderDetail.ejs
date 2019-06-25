@@ -2,8 +2,6 @@
 
 <div class="container">
     <h1>Order Index Page</h1>
-
-    <% orders.forEach(function(order){%>
         <div class="thumbnail">
             <h2><%=order.custName%></h2>
             <h4><%=order.phoneNum%></h4>
@@ -31,12 +29,15 @@
             <%switch (order.orderStatus) {
                 case 0 :%>
                     <p>Menunggu Konfirmasi</p>
+                    <a href="#" class="btn btn-warning">Konfirmasi dan siapkan</a>
                     <%break;%>
                 <%case 1 :%>
                     <p>Pesanan sedang diproses</p>
+                    <a href="#" class="btn btn-primary">Kirim pesanan</a>
                     <%break;%>
                 <%case 2 :%>
                     <p>Pesanan terkirim</p>
+                    <a href="#" class="btn btn-primary">Konfirmasi Selesai</a>
                     <%break;%>
                 <%case 3 :%>
                     <p>Selesai</p>
@@ -46,9 +47,7 @@
                     <p>Err: No Status</p>
                     <%break;%>
             <%}%>
-            <a class="btn btn-primary" href="/admin/order/<%=order._id%>">Detail</a>
         </div>
-    <%})%>
     
 </div>
 

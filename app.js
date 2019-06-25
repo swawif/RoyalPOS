@@ -9,8 +9,9 @@ var express         = require("express"),
     config          = require('./config.json'),
     methodOverride  = require('method-override'),
     //DB Models
-    Menu            = require('./models/menu'),
-    Order           = require('./models/order'),
+    Menu            = require('./models/menu'),     // Menu DB
+    Order           = require('./models/order'),    // Incoming sales order DB
+    Purchase        = require('./models/purchase'), // Upcoming Purchases DB
     //Seeder
     seedDB          = require('./seed');
 
@@ -172,11 +173,6 @@ app.post('/admin/order',function (req,res) {
     var orderDetail = req.body.orderDetail;
     var newOrderObj = req.body.order;
     newOrderObj.orderDetail = orderDetail;
-    if (newOrderObj.isBuying === "on"){
-        newOrderObj.isBuying = true;
-    } else if(newOrderObj.isBuying === undefined) {
-        newOrderObj.isBuying = false;
-    }
     Order.create(newOrderObj, function(err, newOrder){
         if(err){console.log(err);} else {
             console.log("new order!");
@@ -186,6 +182,28 @@ app.post('/admin/order',function (req,res) {
     });
 });
 
+//SHOW
+app.get('/admin/order/:id',function (req,res) {
+    Order.findById(req.params.id, (err, order) =>{
+        if(err){console.log(err);}else{
+            Menu.find({}, (err, menus)=>{
+                if(err){console.log(err);}else{
+                    res.render('admin/orderDetail', {order:order,menus:menus});
+                }
+            });
+        }
+    });
+});
+
+
+//EDIT
+//UPDATE
+//DESTROY
+
+//========= PURCHASE ROUTE ============================
+//INDEX
+//NEW
+//SUBMIT NEW
 //SHOW
 //EDIT
 //UPDATE
