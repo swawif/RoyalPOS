@@ -9,9 +9,10 @@ var express         = require("express"),
     config          = require('./config.json'),
     methodOverride  = require('method-override'),
     //DB Models
-    Menu            = require('./models/menu'),     // Menu DB
-    Order           = require('./models/order'),    // Incoming sales order DB
-    Purchase        = require('./models/purchase'), // Upcoming Purchases DB
+    Menu            = require('./models/menu'),         // Menu DB
+    Order           = require('./models/order'),        // Incoming sales order DB
+    OrderScheme     = require('./models/orderschema');  // Order Type DB
+    Purchase        = require('./models/purchase'),     // Upcoming Purchases DB
     //Seeder
     seedDB          = require('./seed');
 
@@ -162,8 +163,12 @@ app.get('/admin/order/',function (req,res) {
 app.get('/admin/order/new',function (req,res) {
     Menu.find({}, function(err, menus){
         if(err){console.log(err);} else {
-            res.render('admin/newOrder', {menus : menus});
-            console.log("Adding new order...");
+            OrderScheme.find({},(err, schemas) => {
+                if(err){console.log(err);} else {
+                    res.render('admin/newOrder', {menus : menus, schemas:schemas});
+                    console.log("Adding new order...");
+                }
+            })
         }
     });
 });
@@ -173,6 +178,7 @@ app.post('/admin/order',function (req,res) {
     var orderDetail = req.body.orderDetail;
     var newOrderObj = req.body.order;
     newOrderObj.orderDetail = orderDetail;
+    newOrderObj.orderStatus = 0;
     Order.create(newOrderObj, function(err, newOrder){
         if(err){console.log(err);} else {
             console.log("new order!");
@@ -195,10 +201,77 @@ app.get('/admin/order/:id',function (req,res) {
     });
 });
 
-
 //EDIT
+app.get('/admin/order/:id/edit',function (req,res) {
+    Order.findById(req.params.id, (err, order)=> {
+        if(err){console.log(err);}else{
+            Menu.find({}, (err, menus)=>{
+                if(err){console.log(err);}else{
+                    res.render('admin/orderEdit', {order:order,menus:menus});
+                }
+            });
+        }
+    });
+});
+
 //UPDATE
+app.put('/admin/order/:id',function (req,res) {
+    var orderDetail = req.body.orderDetail;
+    var newOrderObj = req.body.order;
+    console.log(newOrderObj);
+    console.log(orderDetail);
+    newOrderObj.orderDetail = orderDetail;
+    Order.findByIdAndUpdate(req.params.id, newOrderObj, {new: true}, (err,updatedOrder)=> {
+        console.log("Updated entry for " + req.params.id);
+        console.log(updatedOrder);
+        res.redirect('/admin/order/'+req.params.id);
+    });
+});
+
+//SPECIAL - UPDATE orderStatus -- ADD CHECKS TO UPDATE Menu.stock IF NEW orderStatus = 1
+app.put('/admin/order/:id/status',function (req,res) {
+    Order.findById(req.params.id, (err, order)=> {
+        if(err){console.log(err);} else {
+            //Store Order object in newObject var
+            var newOrder = order;
+            //Increment the newOrder.orderStatus by 1
+            newOrder.orderStatus = order.orderStatus + 1;
+            //Check if newOrder.orderStatus is not 1 (if 1, update the stock)
+            if(newOrder.orderStatus === 1){
+                Menu.find({}, (err, menus)=>{
+                    if(err){console.log(err);} else {
+                        menus.forEach(function(menu){
+                            var stock  = menu.stock;
+                            var pesanan = newOrder.orderDetail[menu.name];
+                            var newStock = stock - pesanan;
+                            console.log(stock + " - " + pesanan + " = " + newStock);
+                            var newMenu = menu;
+                            newMenu.stock = newStock;
+                            Menu.findOneAndUpdate({name: menu.name}, newMenu, {new:true}, (err, updatedMenu)=>{
+                                if(err){console.log(err);} else {
+                                    console.log("Updated Menu : " + updatedMenu.name + " - " + updatedMenu.stock);
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+            //Update the DB
+            Order.findByIdAndUpdate(req.params.id, newOrder, {new:true}, (err, updatedStatus)=> {
+                console.log("New status : " + updatedStatus.orderStatus);
+                res.redirect('/admin/order/'+req.params.id);
+            });
+
+        }
+    });
+});
+
 //DESTROY
+app.delete('/admin/order/:id',function (req,res) {
+    Order.findByIdAndDelete(req.params.id, (err) => {
+        res.redirect('/admin/order');
+    })
+});
 
 //========= PURCHASE ROUTE ============================
 //INDEX

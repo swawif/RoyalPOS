@@ -1,7 +1,7 @@
 <% include ../partials/header %>
 
 <div class="container">
-    <h1>Order Index Page</h1>
+    <h1>Order Detail Page</h1>
         <div class="thumbnail">
             <h2><%=order.custName%></h2>
             <h4><%=order.phoneNum%></h4>
@@ -29,15 +29,23 @@
             <%switch (order.orderStatus) {
                 case 0 :%>
                     <p>Menunggu Konfirmasi</p>
-                    <a href="#" class="btn btn-warning">Konfirmasi dan siapkan</a>
+                    <form action="/admin/order/<%=order._id%>/status?_method=PUT" method="POST">
+                        <button class="btn btn-warning">Konfirmasi dan siapkan</button>
+                    </form>
                     <%break;%>
                 <%case 1 :%>
-                    <p>Pesanan sedang diproses</p>
-                    <a href="#" class="btn btn-primary">Kirim pesanan</a>
+                    <p>Pesanan sedang diproses - Stok sudah berubah</p>
+                    <!-- <a href="#" class="btn btn-primary">Kirim pesanan</a> -->
+                    <form action="/admin/order/<%=order._id%>/status?_method=PUT" method="POST">
+                        <button class="btn btn-primary">Kirim pesanan</button>
+                    </form>
                     <%break;%>
                 <%case 2 :%>
                     <p>Pesanan terkirim</p>
-                    <a href="#" class="btn btn-primary">Konfirmasi Selesai</a>
+                    <!-- <a href="#" class="btn btn-primary">Konfirmasi Selesai</a> -->
+                    <form action="/admin/order/<%=order._id%>/status?_method=PUT" method="POST">
+                        <button class="btn btn-success">Konfirmasi Selesai</button>
+                    </form>
                     <%break;%>
                 <%case 3 :%>
                     <p>Selesai</p>
@@ -47,6 +55,12 @@
                     <p>Err: No Status</p>
                     <%break;%>
             <%}%>
+            <form action="/admin/order/<%=order._id%>?_method=DELETE" method="POST">
+                <button class="btn btn-danger">Hapus Pesanan</button>
+            </form>
+
+            <a class="btn btn-default" href="/admin/order/<%=order._id%>/edit">Edit</a>
+
         </div>
     
 </div>

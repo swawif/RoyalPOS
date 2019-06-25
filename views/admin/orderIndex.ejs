@@ -1,4 +1,6 @@
 <% include ../partials/header %>
+<% include ../helper %>
+<% var month = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];%>
 
 <div class="container">
     <h1>Order Index Page</h1>
@@ -7,7 +9,8 @@
         <div class="thumbnail">
             <h2><%=order.custName%></h2>
             <h4><%=order.phoneNum%></h4>
-            <p><%=order.orderDate%></p>
+            <%var mm = order.orderDate.getMonth()%>
+            <p><%=order.orderDate.getDate() + " " + month[mm] + " " + order.orderDate.getFullYear()%></p>
             <p><%=order.orderType%></p>
 
             <table class="table">

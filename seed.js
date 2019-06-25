@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Menu = require('./models/menu');
+var OrderSchema = require('./models/orderschema');
 
 var menuData= [
     {
@@ -59,7 +60,7 @@ var menuData= [
     {
         name: "Grape",
         emoji: "🍇",
-        color: "#301934",
+        color: "#cc8899",
         stock: 6
     },
     {
@@ -81,6 +82,33 @@ var menuData= [
         stock: 5
     }
 ];
+
+var orderScheme = [
+    {
+        name: "Ecer",
+        price: 10000
+    },
+    {
+        name: "10Gros",
+        price: 9000
+    },
+    {
+        name: "20Gros",
+        price: 8000
+    },
+    {
+        name: "50Gros",
+        price: 7500
+    },
+    {
+        name: "100Gros",
+        price: 7000
+    },
+    {
+        name: "200Gros",
+        price: 6500
+    },
+]
 
 // var orderData = [
 //     {
@@ -116,6 +144,18 @@ function seedDB(){
             });
         }
     });
+    // OrderSchema.deleteMany({}, (err) => {
+    //     if(err){console.log(err);}else{
+    //         console.log("Order Schema is cleared");
+    //         orderScheme.forEach(function(seed){
+    //             OrderSchema.create(seed, (err, schema)=>{
+    //                 if(err){console.log(err);}else{
+    //                     console.log("Added Schema : " + schema.name);
+    //                 }
+    //             });
+    //         });
+    //     }
+    // });
 }
 
 module.exports = seedDB;

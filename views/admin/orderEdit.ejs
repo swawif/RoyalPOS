@@ -1,9 +1,9 @@
 <% include ../partials/header %>
 
 <div class="container">        
-<h1>Buat Pesanan Baru</h1>
+<h1>Edit Pesanan </h1>
 
-<form action="/admin/order" method="POST">
+<form action="/admin/order/<%=order._id%>?_method=PUT" method="POST">
     <table class="table">
         <tr>
             <% menus.forEach(function(menu){%>
@@ -26,22 +26,17 @@
         <tr>
             <% menus.forEach(function(menu){%>
                 <td>
-                <input class="orderDetail" type="number" name="orderDetail[<%=menu.name%>]" id="<%=menu.name%>">
+                <input class="orderDetail" type="number" name="orderDetail[<%=menu.name%>]" id="<%=menu.name%>" value="<%=order.orderDetail[menu.name]%>">
                 </td>
             <%});%>
         </tr>
     </table>
       
     <p>Info pemesan :</p>
-    <input type="text" name="order[custName]" placeholder="Nama Pemesan/Supplier" required>
-    <select name="order[orderType]" required>
-        <%schemas.forEach(function(schema){%>
-            <option value="<%=schema.name%>"><%=schema.name%> - <%=schema.price%></option>
-        <%});%>
-    </select>
-    <!-- <input type="text" name="order[orderType]" placeholder="skema penjualan" required> -->
-    <input type="tel" name="order[phoneNum]" placeholder="No telp" required>
-    <input type="date" name="order[orderDate]" placeholder="Untuk Hari" required>
+    <input type="text" name="order[custName]" placeholder="Nama Pemesan/Supplier" required value="<%=order.custName%>">
+    <input type="text" name="order[orderType]" placeholder="skema penjualan" required value="<%=order.orderType%>">
+    <input type="tel" name="order[phoneNum]" placeholder="No telp" required value="<%=order.phoneNum%>"> 
+    <input type="date" name="order[orderDate]" placeholder="Untuk Hari" required value="<%=order.orderDate%>">
     
     <!--
         custName: String,
