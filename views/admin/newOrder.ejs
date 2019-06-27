@@ -21,6 +21,14 @@
             <%});%>
         </tr>
         <tr>
+            <td colspan="100"><strong>Upcoming Orders</strong></td>
+        </tr>
+        <tr>
+            <% upcomingOrders.forEach(function(upcomingOrder){%>
+                <td style="color: red"><%=upcomingOrder%></td>
+            <%});%>
+        </tr>
+        <tr>
             <td colspan="100"><strong>YOUR ORDER</strong></td>
         </tr>
         <tr>
@@ -56,3 +64,5 @@
         <button class="btn btn-primary">Order!</button>
     </form>
 </div>
+
+<% include ../partials/footer %>

@@ -163,12 +163,43 @@ app.get('/admin/order/',function (req,res) {
 app.get('/admin/order/new',function (req,res) {
     Menu.find({}, function(err, menus){
         if(err){console.log(err);} else {
-            OrderScheme.find({},(err, schemas) => {
-                if(err){console.log(err);} else {
-                    res.render('admin/newOrder', {menus : menus, schemas:schemas});
-                    console.log("Adding new order...");
+            Order.find({},(err,orders)=> {
+                if(err){console.log(err);} else{
+                    
+                    var upcomingOrders = [];
+                    // check how many arrays inside menus
+                    console.log("Total menus : " + menus.length);
+                    for(i=0;i<menus.length;i++){
+                        //push as many zeros as menus.array to initiate the array
+                        upcomingOrders.push(0);
+                    }
+                    console.log(upcomingOrders);
+                    //Loop through orders array
+                    orders.forEach(order => {
+                        //check if order is still eligible to be counted (any orderStatus under 1)
+                        if(order.orderStatus < 1){
+                            //set index
+                            var idx = 0;
+                            //Loop through menus array
+                            menus.forEach(menu => {
+                                var orderDetail = Number(order.orderDetail[menu.name]);
+                                //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
+                                upcomingOrders[idx] += orderDetail
+                                idx++;
+                            });
+                        }
+                        console.log(upcomingOrders);
+                    });
+
+                    OrderScheme.find({},(err, schemas) => {
+                        if(err){console.log(err);} else {
+                            res.render('admin/newOrder', {menus : menus, schemas:schemas,upcomingOrders:upcomingOrders});
+                            console.log("Adding new order...");
+                        }
+                    });
                 }
-            })
+            });
+
         }
     });
 });
@@ -228,7 +259,7 @@ app.put('/admin/order/:id',function (req,res) {
     });
 });
 
-//SPECIAL - UPDATE orderStatus -- ADD CHECKS TO UPDATE Menu.stock IF NEW orderStatus = 1
+//SPECIAL - UPDATE orderStatus
 app.put('/admin/order/:id/status',function (req,res) {
     Order.findById(req.params.id, (err, order)=> {
         if(err){console.log(err);} else {
