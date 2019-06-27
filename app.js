@@ -1,4 +1,8 @@
 //Bismillahirahmanirahim
+//TODOS
+// MENU - Update -- TODO MAKE DUPLICATE PROTECTION
+
+
 //Dependencies
 var express         = require("express"),
     app             = express(),
@@ -93,7 +97,7 @@ app.post('/admin/menu',function (req,res) {
                 // res.render('admin/newMenu', {err: "menuExisted"});
                 res.redirect('/admin/menu')
                 console.log("Menu Existed! : " + foundMenu.name + ", Canceling...");
-            // If not, add the new menu to the 
+            // If not, add the new menu to the DB
             } else if (foundMenu === null) {
                 Menu.create(req.body.menu, function(err,newMenu){
                     if(err){
@@ -165,12 +169,11 @@ app.get('/admin/order/new',function (req,res) {
         if(err){console.log(err);} else {
             Order.find({},(err,orders)=> {
                 if(err){console.log(err);} else{
-                    
                     var upcomingOrders = [];
                     // check how many arrays inside menus
                     console.log("Total menus : " + menus.length);
                     for(i=0;i<menus.length;i++){
-                        //push as many zeros as menus.array to initiate the array
+                        //push as many zeros as menus array to initiate the array
                         upcomingOrders.push(0);
                     }
                     console.log(upcomingOrders);
@@ -208,7 +211,9 @@ app.get('/admin/order/new',function (req,res) {
 app.post('/admin/order',function (req,res) {
     var orderDetail = req.body.orderDetail;
     var newOrderObj = req.body.order;
+    //insert the var orderDetail into the Order.orderDetail property
     newOrderObj.orderDetail = orderDetail;
+    //set order status as awaiting confirmation
     newOrderObj.orderStatus = 0;
     Order.create(newOrderObj, function(err, newOrder){
         if(err){console.log(err);} else {
@@ -271,13 +276,17 @@ app.put('/admin/order/:id/status',function (req,res) {
             if(newOrder.orderStatus === 1){
                 Menu.find({}, (err, menus)=>{
                     if(err){console.log(err);} else {
+                        //Loop through menus
                         menus.forEach(function(menu){
-                            var stock  = menu.stock;
-                            var pesanan = newOrder.orderDetail[menu.name];
-                            var newStock = stock - pesanan;
-                            console.log(stock + " - " + pesanan + " = " + newStock);
+                            //Substract the menu stock with the ordered quantity and store it into newStock
+                            var newStock = menu.stock - newOrder.orderDetail[menu.name];
+                            //Console.log just to be safe
+                            console.log(menu.stock + " - " + newOrder.orderDetail[menu.name] + " = " + newStock);
+                            //Store the menu in other variable to keep the old one safe
                             var newMenu = menu;
+                            //set the new stock into the variable
                             newMenu.stock = newStock;
+                            //Update the entry on DB
                             Menu.findOneAndUpdate({name: menu.name}, newMenu, {new:true}, (err, updatedMenu)=>{
                                 if(err){console.log(err);} else {
                                     console.log("Updated Menu : " + updatedMenu.name + " - " + updatedMenu.stock);
@@ -324,8 +333,3 @@ var port = 3000;
 app.listen(port, function(){
 console.log('rjdPOS is listening on port ' + port);
 });
-
-/*NOTES
-DB Model antara Menus dan Orders akan dipisah aja. 
-mereka cuman terhubung pas ada transaksi terjadi
-*/
