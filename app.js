@@ -333,3 +333,33 @@ var port = 3000;
 app.listen(port, function(){
 console.log('rjdPOS is listening on port ' + port);
 });
+
+//FUNCTION LAND (temp)
+
+function createUpcomingOrderArray(orders, menus) {
+    var upcomingOrders = [];
+    // check how many arrays inside menus
+    console.log("Total menus : " + menus.length);
+    for(i=0;i<menus.length;i++){
+        //push as many zeros as menus array to initiate the array
+        upcomingOrders.push(0);
+    }
+    console.log(upcomingOrders);
+    //Loop through orders array
+    orders.forEach(order => {
+        //check if order is still eligible to be counted (any orderStatus under 1)
+        if(order.orderStatus < 1){
+            //set index
+            var idx = 0;
+            //Loop through menus array
+            menus.forEach(menu => {
+                var orderDetail = Number(order.orderDetail[menu.name]);
+                //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
+                upcomingOrders[idx] += orderDetail
+                idx++;
+            });
+        }
+        console.log(upcomingOrders);
+        return upcomingOrders;
+    });
+}
