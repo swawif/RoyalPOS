@@ -1,0 +1,66 @@
+<% include ../partials/header %>
+
+<div class="container">        
+<h1>Buat Pesanan Baru</h1>
+
+<form action="/admin/purchase" method="POST">
+    <table class="table">
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <th><%=menu.name.substring(0,3).toUpperCase()%></th>
+                <%});%>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td><%=menu.emoji%></td>
+            <%});%>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td><%=menu.stock%></td>
+            <%});%>
+        </tr>
+        <tr>
+            <td colspan="100"><strong>Incoming Purchases</strong></td>
+        </tr>
+        <tr>
+            <% upcomingOrders.forEach(function(upcomingOrder){%>
+                <td style="color: red"><%=upcomingOrder%></td>
+            <%});%>
+        </tr>
+        <tr>
+            <td colspan="100"><strong>YOUR ORDER</strong></td>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td>
+                <input class="orderDetail" type="number" name="purchaseDetail[<%=menu.name%>]" id="<%=menu.name%>">
+                </td>
+            <%});%>
+        </tr>
+    </table>
+      
+    <p>Info pemesan :</p>
+    <input type="text" name="purchase[supplierName]" placeholder="Nama Pemesan/Supplier" value="RJD Home" required>
+    <select name="purchase[purchaseType]" required>
+        <%schemas.forEach(function(schema){%>
+            <option value="<%=schema.name%>"><%=schema.name%> - <%=schema.price%></option>
+        <%});%>
+    </select>
+    <input type="date" name="purchase[purchaseDate]" placeholder="Untuk Hari" required>
+    
+    <!--
+        custName: String,
+        orderType: String,
+        phoneNum: Number,
+        isBuying: Boolean,
+        orderDate: Date,
+        orderCode: String,
+        orderStatus: String,
+        orderDetail: Array -->
+        
+        <button class="btn btn-primary">Purchase!</button>
+    </form>
+</div>
+
+<% include ../partials/footer %>

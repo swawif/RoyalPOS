@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Menu = require('./models/menu');
 var OrderSchema = require('./models/orderschema');
+var PurchaseSchema = require('./models/purchaseschema');
 
 var menuData= [
     {
@@ -110,6 +111,21 @@ var orderScheme = [
     },
 ]
 
+var purchaseScheme = [
+    {
+        name: "1beli", //100-200
+        price: 6500
+    },
+    {
+        name: "2beli", //200-300
+        price: 6000
+    },
+    {
+        name: "3beli", //300>
+        price: 5500
+    }
+]
+
 // var orderData = [
 //     {
 //         custName: "Arif",
@@ -139,6 +155,18 @@ function seedDB(){
                 Menu.create(seed, function(err, menu){
                     if(err){console.log(err);} else {
                         console.log('Added menu : ' + menu.name);
+                    }
+                });
+            });
+        }
+    });
+    PurchaseSchema.deleteMany({}, (err) => {
+        if(err){console.log(err);}else{
+            console.log("Purchase Schema is cleared");
+            purchaseScheme.forEach(function(seed){
+                PurchaseSchema.create(seed, (err, schema)=>{
+                    if(err){console.log(err);}else{
+                        console.log("Added Schema : " + schema.name);
                     }
                 });
             });

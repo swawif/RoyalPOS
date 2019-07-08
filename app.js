@@ -1,6 +1,7 @@
 //Bismillahirahmanirahim
 //TODOS
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
+// PURCHASE - NEW  -- TODO ADD UPCOMINGORDERS
 
 
 //Dependencies
@@ -15,8 +16,9 @@ var express         = require("express"),
     //DB Models
     Menu            = require('./models/menu'),         // Menu DB
     Order           = require('./models/order'),        // Incoming sales order DB
-    OrderScheme     = require('./models/orderschema');  // Order Type DB
+    OrderScheme     = require('./models/orderschema'),  // Order Type DB
     Purchase        = require('./models/purchase'),     // Upcoming Purchases DB
+    PurchaseScheme  = require('./models/purchaseschema'), // Purchase Type DB
     //Seeder
     seedDB          = require('./seed');
 
@@ -315,7 +317,62 @@ app.delete('/admin/order/:id',function (req,res) {
 
 //========= PURCHASE ROUTE ============================
 //INDEX
-//NEW
+app.get('/admin/purchase',function (req,res) {
+    Purchase.find({}, (err, purchases) => {
+        if(err){console.log(err);} else{
+            Menu.find({}, (err,menus) => {
+                res.render('purchase/index', {purchases : purchases, menus : menus});
+            });
+        }
+    });
+});
+
+//NEW -- ADD UPCOMINGORDERS
+app.get('/admin/purchase/new',function (req,res) {
+    Menu.find({}, function(err, menus){
+        if(err){console.log(err);} else {
+            Purchase.find({},(err,purchases)=> {
+                if(err){console.log(err);} else{
+                    //ADD UPCOMINGORDERS
+
+                    var upcomingPurchases = [];
+                    // check how many arrays inside menus
+                    console.log("Total menus : " + menus.length);
+                    for(i=0;i<menus.length;i++){
+                        //push as many zeros as menus array to initiate the array
+                        upcomingPurchases.push(0);
+                    }
+                    console.log(upcomingPurchases);
+                    //Loop through orders array
+                    purchases.forEach(purchase => {
+                        //check if order is still eligible to be counted (any orderStatus under 1)
+                        if(purchase.purchaseStatus < 1){
+                            //set index
+                            var idx = 0;
+                            //Loop through menus array
+                            menus.forEach(menu => {
+                                var purchaseDetail = Number(purchase.purchaseDetail[menu.name]);
+                                //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
+                                upcomingPurchases[idx] += purchaseDetail
+                                idx++;
+                            });
+                        }
+                        console.log(upcomingPurchases);
+                    });
+
+                    PurchaseScheme.find({},(err, schemas) => {
+                        if(err){console.log(err);} else {
+                            res.render('purchase/new', {menus : menus, schemas:schemas,upcomingOrders:upcomingPurchases});
+                            console.log("Adding new order...");
+                        }
+                    });
+                }
+            });
+
+        }
+    });
+});
+
 //SUBMIT NEW
 //SHOW
 //EDIT
