@@ -1,7 +1,7 @@
 <% include ../partials/header %>
 
 <div class="container">        
-<h1>Buat Pesanan Baru</h1>
+<h1>Buat Pembelian Baru</h1>
 
 <form action="/admin/purchase" method="POST">
     <table class="table">
@@ -15,19 +15,54 @@
                 <td><%=menu.emoji%></td>
             <%});%>
         </tr>
+        
         <tr>
+            <% var menuArr = []; %>
             <% menus.forEach(function(menu){%>
                 <td><%=menu.stock%></td>
+                <% menuArr.push(menu.stock) %>
             <%});%>
         </tr>
+        <!-- Incoming Orders -->
         <tr>
-            <td colspan="100"><strong>Incoming Purchases</strong></td>
+            <% upcomingOrderArr = []; %>
+            <td colspan="100"><strong>Pesanan akan datang</strong></td>
         </tr>
         <tr>
             <% upcomingOrders.forEach(function(upcomingOrder){%>
                 <td style="color: red"><%=upcomingOrder%></td>
+                <% upcomingOrderArr.push(upcomingOrder) %>
             <%});%>
         </tr>
+
+        <!-- Incoming Purchases -->
+        <tr>
+            <td colspan="100"><strong>Pembelian akan datang</strong></td>
+        </tr>
+        <tr>
+            <% upcomingPurchaseArr = []; %>
+            <% upcomingPurchases.forEach(function(upcomingPurchase){%>
+                <td><%=upcomingPurchase%></td>
+                <% upcomingPurchaseArr.push(upcomingPurchase) %>
+            <%});%>
+        </tr>
+
+        <!-- Next Stock -->
+        <tr>
+            <td colspan="100"><strong>Stok Selanjutnya</strong></td>
+        </tr>
+        <tr>
+            <% 
+            var nextStocks = [];
+            for(i=0; i < menuArr.length; i++){
+                var stock = menuArr[i] - upcomingOrderArr[i] + upcomingPurchaseArr[i];
+                nextStocks.push(stock);
+            }
+            nextStocks.forEach(function (nextStock) { %>
+                <td><strong><%= nextStock %></strong></td>
+            <% }); %>
+        </tr>
+
         <tr>
             <td colspan="100"><strong>YOUR ORDER</strong></td>
         </tr>
@@ -50,14 +85,11 @@
     <input type="date" name="purchase[purchaseDate]" placeholder="Untuk Hari" required>
     
     <!--
-        custName: String,
-        orderType: String,
-        phoneNum: Number,
-        isBuying: Boolean,
-        orderDate: Date,
-        orderCode: String,
-        orderStatus: String,
-        orderDetail: Array -->
+    supplierName: String, // Name Customer
+    purchaseType: String,// 1beli, 2beli, 3beli
+    purchaseDate: Date,  // Estimasi tanggal kedatangan
+    purchaseStatus: String, // Status pesanan,Menunggu Konfirmasi, Order di Proses, Sudah di kirim, Selesai di edit di /order/:id/edit
+    purchaseDetail: Object  //Detail pesanan -->
         
         <button class="btn btn-primary">Purchase!</button>
     </form>

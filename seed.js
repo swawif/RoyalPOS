@@ -160,18 +160,18 @@ function seedDB(){
             });
         }
     });
-    PurchaseSchema.deleteMany({}, (err) => {
-        if(err){console.log(err);}else{
-            console.log("Purchase Schema is cleared");
-            purchaseScheme.forEach(function(seed){
-                PurchaseSchema.create(seed, (err, schema)=>{
-                    if(err){console.log(err);}else{
-                        console.log("Added Schema : " + schema.name);
-                    }
-                });
-            });
-        }
-    });
+    // PurchaseSchema.deleteMany({}, (err) => {
+    //     if(err){console.log(err);}else{
+    //         console.log("Purchase Schema is cleared");
+    //         purchaseScheme.forEach(function(seed){
+    //             PurchaseSchema.create(seed, (err, schema)=>{
+    //                 if(err){console.log(err);}else{
+    //                     console.log("Added Schema : " + schema.name);
+    //                 }
+    //             });
+    //         });
+    //     }
+    // });
     // OrderSchema.deleteMany({}, (err) => {
     //     if(err){console.log(err);}else{
     //         console.log("Order Schema is cleared");

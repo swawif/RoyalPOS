@@ -15,19 +15,54 @@
                 <td><%=menu.emoji%></td>
             <%});%>
         </tr>
+
         <tr>
+            <% var menuArr = []; %>
             <% menus.forEach(function(menu){%>
                 <td><%=menu.stock%></td>
+                <% menuArr.push(menu.stock) %>
             <%});%>
         </tr>
+        <!-- Incoming Orders -->
         <tr>
-            <td colspan="100"><strong>Upcoming Orders</strong></td>
+            <% upcomingOrderArr = []; %>
+            <td colspan="100"><strong>Pesanan akan datang</strong></td>
         </tr>
         <tr>
             <% upcomingOrders.forEach(function(upcomingOrder){%>
                 <td style="color: red"><%=upcomingOrder%></td>
+                <% upcomingOrderArr.push(upcomingOrder) %>
             <%});%>
         </tr>
+
+        <!-- Incoming Purchases -->
+        <tr>
+            <td colspan="100"><strong>Pembelian akan datang</strong></td>
+        </tr>
+        <tr>
+            <% upcomingPurchaseArr = []; %>
+            <% upcomingPurchases.forEach(function(upcomingPurchase){%>
+                <td><%=upcomingPurchase%></td>
+                <% upcomingPurchaseArr.push(upcomingPurchase) %>
+            <%});%>
+        </tr>
+
+        <!-- Next Stock -->
+        <tr>
+            <td colspan="100"><strong>Stok Selanjutnya</strong></td>
+        </tr>
+        <tr>
+            <% 
+            var nextStocks = [];
+            for(i=0; i < menuArr.length; i++){
+                var stock = menuArr[i] - upcomingOrderArr[i] + upcomingPurchaseArr[i];
+                nextStocks.push(stock);
+            }
+            nextStocks.forEach(function (nextStock) { %>
+                <td><strong><%= nextStock %></strong></td>
+            <% }); %>
+        </tr>
+
         <tr>
             <td colspan="100"><strong>YOUR ORDER</strong></td>
         </tr>
