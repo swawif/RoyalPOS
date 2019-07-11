@@ -1,0 +1,54 @@
+<% include ../partials/header %>
+
+<div class="container">        
+<h1>Edit Pembelian </h1>
+
+<form action="/admin/purchase/<%=purchase._id%>?_method=PUT" method="POST">
+    <table class="table">
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <th><%=menu.name.substring(0,3).toUpperCase()%></th>
+                <%});%>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td><%=menu.emoji%></td>
+            <%});%>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td><%=menu.stock%></td>
+            <%});%>
+        </tr>
+        <tr>
+            <td colspan="100"><strong>YOUR ORDER</strong></td>
+        </tr>
+        <tr>
+            <% menus.forEach(function(menu){%>
+                <td>
+                <input class="orderDetail" type="number" name="purchaseDetail[<%=menu.name%>]" id="<%=menu.name%>" value="<%=purchase.purchaseDetail[menu.name]%>">
+                </td>
+            <%});%>
+        </tr>
+    </table>
+      
+    <p>Info pemesan :</p>
+    <input type="text" name="purchase[supplierName]" placeholder="Nama Pemesan/Supplier" required value="<%=purchase.supplierName%>">
+    <input type="text" name="purchase[purchaseType]" placeholder="skema penjualan" required value="<%=purchase.purchaseType%>">
+    <input type="date" name="purchase[purchaseDate]" placeholder="Untuk Hari" required value="<%=purchase.purchaseDate%>">
+    
+    <!--
+        custName: String,
+        orderType: String,
+        phoneNum: Number,
+        isBuying: Boolean,
+        orderDate: Date,
+        orderCode: String,
+        orderStatus: String,
+        orderDetail: Array -->
+        
+        <button class="btn btn-primary">Order!</button>
+    </form>
+</div>
+
+<% include ../partials/footer %>

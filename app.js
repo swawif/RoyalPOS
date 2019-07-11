@@ -1,4 +1,4 @@
-//Bismillahirahmanirahim
+// بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
 //TODOS
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
 // PURCHASE - NEW  -- TODO ADD UPCOMINGORDERS
@@ -306,7 +306,7 @@ app.put('/admin/order/:id/status',function (req,res) {
                         //Loop through menus
                         menus.forEach(function(menu){
                             //Substract the menu stock with the ordered quantity and store it into newStock
-                            var newStock = menu.stock - newOrder.orderDetail[menu.name];
+                            var newStock = menu.stock - Number(newOrder.orderDetail[menu.name]);
                             //Console.log just to be safe
                             console.log(menu.stock + " - " + newOrder.orderDetail[menu.name] + " = " + newStock);
                             //Store the menu in other variable to keep the old one safe
@@ -455,9 +455,69 @@ app.get('/admin/purchase/:id', function(req, res){
 });
 
 //EDIT
+app.get('/admin/purchase/:id/edit', function(req, res){
+    Purchase.findById(req.params.id, (err, purchase) => {
+        if(err){console.log(err);} else {
+            Menu.find({}, (err, menus) => {
+                if(err){console.log(err);} else {
+                    res.render('purchase/edit', {purchase : purchase, menus : menus});
+                }
+            });
+        }
+    });
+});
+
 //CHANGE STATUS
+app.put('/admin/purchase/:id/status', function(req, res){
+    Purchase.findById(req.params.id, (err, purchase) => {
+        if(err){console.log(err);} else {
+            var newPurchase = purchase;
+            newPurchase.purchaseStatus = purchase.purchaseStatus + 1;
+            if(newPurchase.purchaseStatus === 1){
+                Menu.find({}, (err, menus) => {
+                    if(err){console.log(err);} else {
+                        menus.forEach(menu => {
+                            var newStock = menu.stock + Number(newPurchase.purchaseDetail[menu.name]);
+                            console.log(menu.stock + " + " + newPurchase.purchaseDetail[menu.name] + " = " + newStock);
+                            var newMenu = menu;
+                            newMenu.stock = newStock;
+                            Menu.findOneAndUpdate({name: menu.name}, newMenu, {new:true}, (err, updatedMenu) => {
+                                if(err){console.log(err);} else {
+                                    console.log("Updated Menu :" + updatedMenu.name + " - " + updatedMenu.stock)
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+        Purchase.findByIdAndUpdate(req.params.id, newPurchase, {new:true}, (err, updatedStatus) => {
+            console.log("New Status : " + updatedStatus.purchaseStatus);
+            res.redirect('/admin/purchase/' + req.params.id);
+        });
+        }
+    });
+});
+
 //UPDATE
+app.put('/admin/purchase/:id', function(req, res){
+    var purchaseDetail = req.body.purchaseDetail;
+    var newPurchaseObj = req.body.purchase;
+    newPurchaseObj.purchaseDetail = purchaseDetail;
+    console.log(newPurchaseObj)
+    Purchase.findByIdAndUpdate(req.params.id, newPurchaseObj, {new: true}, (err,updatedOrder)=> {
+        if(err){console.log(err);} else {
+            console.log("Updated entry for " + req.params.id);
+            res.redirect('/admin/purchase/'+req.params.id);
+        }
+    });
+});
+
 //DESTROY
+app.delete('/admin/purchase/:id', function(req, res){
+    Purchase.findByIdAndDelete(req.params.id, (err) => {
+        res.redirect('/admin/purchase');
+    });
+});
 
 
 //404 Handler
