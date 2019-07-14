@@ -287,11 +287,11 @@ app.get('/admin/order/:id/edit',function (req,res) {
 
 //UPDATE
 app.put('/admin/order/:id',function (req,res) {
-    var orderDetail = req.body.orderDetail;
-    var newOrderObj = req.body.order;
+    var orderDetail = req.body.detail;
+    var newOrderObj = req.body.query;
     console.log(newOrderObj);
     console.log(orderDetail);
-    newOrderObj.orderDetail = orderDetail;
+    newOrderObj.detail = orderDetail;
     Order.findByIdAndUpdate(req.params.id, newOrderObj, {new: true}, (err,updatedOrder)=> {
         console.log("Updated entry for " + req.params.id);
         console.log(updatedOrder);

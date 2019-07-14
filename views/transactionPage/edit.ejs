@@ -35,19 +35,19 @@
       
     <p>Info pemesan :</p>
     <input type="text" name="query[name]" placeholder="Nama Pemesan/Supplier" required value="<%=data.name%>">
+    <%if (transactionType === "order") {%>
+        <input type="text" name="query[phoneNum]" placeholder="skema penjualan" required value="<%=data.phoneNum%>">
+    <%}%>
+    <%
+    var dd = data.date.getDate();
+    var MM = data.date.getMonth();
+    if (MM < 10){MM = "0" + MM;} else {MM = "1" + MM;}
+    var yyyy = data.date.getFullYear();
+    %>
     <input type="text" name="query[type]" placeholder="skema penjualan" required value="<%=data.type%>">
-    <input type="date" name="query[date]" placeholder="Untuk Hari" required value="<%=data.date%>">
+    <input type="date" name="query[date]" placeholder="Untuk Hari" required value="<%=yyyy + "-" + MM + "-" + dd%>">
     
-    <!--
-        custName: String,
-        orderType: String,
-        phoneNum: Number,
-        isBuying: Boolean,
-        orderDate: Date,
-        orderCode: String,
-        orderStatus: String,
-        orderDetail: Array -->
-        
+      
         <button class="btn btn-primary">Submit!</button>
     </form>
 </div>
