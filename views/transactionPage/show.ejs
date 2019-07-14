@@ -1,0 +1,68 @@
+<% include ../partials/header %>
+<%var url = transactionType%>
+
+<div class="container">
+    <h1><%=url%> Detail Page</h1>
+        <div class="thumbnail">
+            <h2><%=data.name%></h2>
+            <p><%=data.date%></p>
+            <p><%=data.type%></p>
+
+            <table class="table">
+                <tr>
+                    <% menus.forEach(function(menu){%>
+                    <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
+                    <%});%>
+                </tr>
+                <tr>
+                    <% menus.forEach(function(menu){%>
+                        <td><%=menu.emoji%></td>
+                    <%});%>
+                </tr>
+                <tr>
+                    <% menus.forEach(function(menu){%>
+                        <td><%=data.detail[menu.name]%></td>
+                    <%});%>
+                </tr>
+            </table>
+            <p>Status :
+            <%switch (data.status) {
+                case 0 :%>
+                    Menunggu Konfirmasi</p>
+                    <form action="/admin/<%=url%>/<%=data._id%>/status?_method=PUT" method="POST">
+                        <button class="btn btn-warning">Konfirmasi dan siapkan</button>
+                    </form>
+                    <%break;%>
+                <%case 1 :%>
+                    Pesanan sedang diproses - Stok sudah berubah</p>
+                    <!-- <a href="#" class="btn btn-primary">Kirim pesanan</a> -->
+                    <form action="/admin/<%=url%>/<%=data._id%>/status?_method=PUT" method="POST">
+                        <button class="btn btn-primary">Kirim pesanan</button>
+                    </form>
+                    <%break;%>
+                <%case 2 :%>
+                    Pesanan terkirim</p>
+                    <!-- <a href="#" class="btn btn-primary">Konfirmasi Selesai</a> -->
+                    <form action="/admin/<%=url%>/<%=data._id%>/status?_method=PUT" method="POST">
+                        <button class="btn btn-success">Konfirmasi Selesai</button>
+                    </form>
+                    <%break;%>
+                <%case 3 :%>
+                    Selesai</p>
+                    <%break;%>
+            
+                <%default:%>
+                    Err: No Status</p>
+                    <%break;%>
+            <%}%>
+            <form action="/admin/<%=url%>/<%=data._id%>?_method=DELETE" method="POST">
+                <button class="btn btn-danger">Hapus Pesanan</button>
+            </form>
+
+            <a class="btn btn-default" href="/admin/<%=url%>/<%=data._id%>/edit">Edit</a>
+
+        </div>
+    
+</div>
+
+<% include ../partials/footer %>

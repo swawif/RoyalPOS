@@ -2,6 +2,7 @@
 //TODOS
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
 // PURCHASE - NEW  -- TODO ADD UPCOMINGORDERS
+// INDEX.ejs -- TODO replace details with 0 if it returns undefined
 
 
 //Dependencies
@@ -157,7 +158,7 @@ app.get('/admin/order/',function (req,res) {
         if(err){console.log(err)} else {
             Menu.find({},(err,menus)=>{
                 if(err){console.log(err)} else {
-                    res.render('admin/orderIndex', {orders:orders, menus:menus});
+                    res.render('transactionPage/index', {datas:orders, menus:menus, transactionType:"order"});
                 }
             });
         }
@@ -189,12 +190,12 @@ app.get('/admin/order/new',function (req,res) {
                             //Loop through orders array
                             purchases.forEach(purchase => {
                                 //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(purchase.purchaseStatus < 1){
+                                if(purchase.status < 1){
                                     //set index
                                     var idx = 0;
                                     //Loop through menus array
                                     menus.forEach(menu => {
-                                        var purchaseDetail = Number(purchase.purchaseDetail[menu.name]);
+                                        var purchaseDetail = Number(purchase.detail[menu.name]);
                                         //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
                                         upcomingPurchases[idx] += purchaseDetail
                                         idx++;
@@ -205,12 +206,12 @@ app.get('/admin/order/new',function (req,res) {
 
                             orders.forEach(order => {
                                 //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(order.orderStatus < 1){
+                                if(order.status < 1){
                                     //set index
                                     var idx = 0;
                                     //Loop through menus array
                                     menus.forEach(menu => {
-                                        var orderDetail = Number(order.orderDetail[menu.name]);
+                                        var orderDetail = Number(order.detail[menu.name]);
                                         //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
                                         upcomingOrders[idx] += orderDetail
                                         idx++;
@@ -219,9 +220,15 @@ app.get('/admin/order/new',function (req,res) {
                                 console.log(upcomingOrders);
                             });
         
-                            PurchaseScheme.find({},(err, schemas) => {
+                            OrderScheme.find({},(err, schemas) => {
                                 if(err){console.log(err);} else {
-                                    res.render('admin/newOrder', {menus : menus, schemas : schemas, upcomingOrders : upcomingOrders, upcomingPurchases : upcomingPurchases});
+                                    res.render('transactionPage/new', {
+                                        menus : menus,
+                                        schemas : schemas,
+                                        upcomingOrders : upcomingOrders,
+                                        upcomingPurchases : upcomingPurchases,
+                                        transactionType:"order"
+                                    });
                                     console.log("Adding new order...");
                                 }
                             });
@@ -236,12 +243,13 @@ app.get('/admin/order/new',function (req,res) {
 
 //CREATE
 app.post('/admin/order',function (req,res) {
-    var orderDetail = req.body.orderDetail;
-    var newOrderObj = req.body.order;
+    var orderDetail = req.body.detail;
+    var newOrderObj = req.body.query;
+    console.log(orderDetail);
     //insert the var orderDetail into the Order.orderDetail property
-    newOrderObj.orderDetail = orderDetail;
+    newOrderObj.detail = orderDetail;
     //set order status as awaiting confirmation
-    newOrderObj.orderStatus = 0;
+    newOrderObj.status = 0;
     Order.create(newOrderObj, function(err, newOrder){
         if(err){console.log(err);} else {
             console.log("new order!");
@@ -257,7 +265,7 @@ app.get('/admin/order/:id',function (req,res) {
         if(err){console.log(err);}else{
             Menu.find({}, (err, menus)=>{
                 if(err){console.log(err);}else{
-                    res.render('admin/orderDetail', {order:order,menus:menus});
+                    res.render('transactionPage/show', {data:order,menus:menus, transactionType:"order"});
                 }
             });
         }
@@ -270,7 +278,7 @@ app.get('/admin/order/:id/edit',function (req,res) {
         if(err){console.log(err);}else{
             Menu.find({}, (err, menus)=>{
                 if(err){console.log(err);}else{
-                    res.render('admin/orderEdit', {order:order,menus:menus});
+                    res.render('transactionPage/edit', {data:order, menus:menus, transactionType:"order"});
                 }
             });
         }
