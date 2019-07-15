@@ -355,7 +355,11 @@ app.get('/admin/purchase',function (req,res) {
         if(err){console.log(err);} else{
             Menu.find({}, (err,menus) => {
                 if(err){console.log(err);} else {
-                    res.render('purchase/index', {purchases : purchases, menus : menus});
+                    res.render('transactionPage/index', {
+                        datas           : purchases,
+                        menus           : menus,
+                        transactionType : "purchase"
+                    });
                 }
             });
         }
@@ -387,12 +391,12 @@ app.get('/admin/purchase/new',function (req,res) {
                             //Loop through orders array
                             purchases.forEach(purchase => {
                                 //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(purchase.purchaseStatus < 1){
+                                if(purchase.status < 1){
                                     //set index
                                     var idx = 0;
                                     //Loop through menus array
                                     menus.forEach(menu => {
-                                        var purchaseDetail = Number(purchase.purchaseDetail[menu.name]);
+                                        var purchaseDetail = Number(purchase.detail[menu.name]);
                                         //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
                                         upcomingPurchases[idx] += purchaseDetail
                                         idx++;
@@ -403,12 +407,12 @@ app.get('/admin/purchase/new',function (req,res) {
 
                             orders.forEach(order => {
                                 //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(order.orderStatus < 1){
+                                if(order.status < 1){
                                     //set index
                                     var idx = 0;
                                     //Loop through menus array
                                     menus.forEach(menu => {
-                                        var orderDetail = Number(order.orderDetail[menu.name]);
+                                        var orderDetail = Number(order.detail[menu.name]);
                                         //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
                                         upcomingOrders[idx] += orderDetail
                                         idx++;
@@ -419,7 +423,13 @@ app.get('/admin/purchase/new',function (req,res) {
         
                             PurchaseScheme.find({},(err, schemas) => {
                                 if(err){console.log(err);} else {
-                                    res.render('purchase/new', {menus : menus, schemas : schemas, upcomingOrders : upcomingOrders, upcomingPurchases : upcomingPurchases});
+                                    res.render('transactionPage/new', {
+                                        menus : menus,
+                                        schemas : schemas,
+                                        upcomingOrders : upcomingOrders,
+                                        upcomingPurchases : upcomingPurchases,
+                                        transactionType : "purchase"
+                                    });
                                     console.log("Adding new order...");
                                 }
                             });
@@ -434,12 +444,12 @@ app.get('/admin/purchase/new',function (req,res) {
 
 //CREATE
 app.post('/admin/purchase', function(req, res){
-    var purchaseDetail = req.body.purchaseDetail;
-    var newPurchaseObj = req.body.purchase;
+    var purchaseDetail = req.body.detail;
+    var newPurchaseObj = req.body.query;
     //insert the var orderDetail into the Order.orderDetail property
-    newPurchaseObj.purchaseDetail = purchaseDetail;
+    newPurchaseObj.detail = purchaseDetail;
     //set purchaseStatus as 0
-    newPurchaseObj.purchaseStatus = 0;
+    newPurchaseObj.status = 0;
     Purchase.create(newPurchaseObj, (err,newPurchase) => {
         if(err){console.log(err);} else {
             console.log("new purchase!");
@@ -455,7 +465,11 @@ app.get('/admin/purchase/:id', function(req, res){
         if(err){console.log(err);} else {
             Menu.find({}, (err, menus) => {
                 if(err){console.log(err);} else {
-                    res.render('purchase/show', {purchase:purchase, menus:menus});
+                    res.render('transactionPage/show', {
+                        data:purchase,
+                        menus:menus,
+                        transactionType: "purchase"
+                    });
                 }
             });
         }
@@ -468,7 +482,11 @@ app.get('/admin/purchase/:id/edit', function(req, res){
         if(err){console.log(err);} else {
             Menu.find({}, (err, menus) => {
                 if(err){console.log(err);} else {
-                    res.render('purchase/edit', {purchase : purchase, menus : menus});
+                    res.render('transactionPage/edit', {
+                        data : purchase,
+                        menus : menus,
+                        transactionType: "purchase"
+                    });
                 }
             });
         }
@@ -480,13 +498,13 @@ app.put('/admin/purchase/:id/status', function(req, res){
     Purchase.findById(req.params.id, (err, purchase) => {
         if(err){console.log(err);} else {
             var newPurchase = purchase;
-            newPurchase.purchaseStatus = purchase.purchaseStatus + 1;
-            if(newPurchase.purchaseStatus === 1){
+            newPurchase.status = purchase.status + 1;
+            if(newPurchase.status === 1){
                 Menu.find({}, (err, menus) => {
                     if(err){console.log(err);} else {
                         menus.forEach(menu => {
-                            var newStock = menu.stock + Number(newPurchase.purchaseDetail[menu.name]);
-                            console.log(menu.stock + " + " + newPurchase.purchaseDetail[menu.name] + " = " + newStock);
+                            var newStock = menu.stock + Number(newPurchase.detail[menu.name]);
+                            console.log(menu.stock + " + " + newPurchase.detail[menu.name] + " = " + newStock);
                             var newMenu = menu;
                             newMenu.stock = newStock;
                             Menu.findOneAndUpdate({name: menu.name}, newMenu, {new:true}, (err, updatedMenu) => {
@@ -499,7 +517,7 @@ app.put('/admin/purchase/:id/status', function(req, res){
                 });
             }
         Purchase.findByIdAndUpdate(req.params.id, newPurchase, {new:true}, (err, updatedStatus) => {
-            console.log("New Status : " + updatedStatus.purchaseStatus);
+            console.log("New Status : " + updatedStatus.status);
             res.redirect('/admin/purchase/' + req.params.id);
         });
         }
@@ -508,9 +526,9 @@ app.put('/admin/purchase/:id/status', function(req, res){
 
 //UPDATE
 app.put('/admin/purchase/:id', function(req, res){
-    var purchaseDetail = req.body.purchaseDetail;
-    var newPurchaseObj = req.body.purchase;
-    newPurchaseObj.purchaseDetail = purchaseDetail;
+    var purchaseDetail = req.body.detail;
+    var newPurchaseObj = req.body.query;
+    newPurchaseObj.detail = purchaseDetail;
     console.log(newPurchaseObj)
     Purchase.findByIdAndUpdate(req.params.id, newPurchaseObj, {new: true}, (err,updatedOrder)=> {
         if(err){console.log(err);} else {

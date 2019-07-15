@@ -3,6 +3,7 @@ var Menu = require('./models/menu');
 var OrderSchema = require('./models/orderschema');
 var PurchaseSchema = require('./models/purchaseschema');
 var Order = require('./models/order');
+var Purchase = require('./models/purchase');
 
 var menuData= [
     {
@@ -196,6 +197,72 @@ var orderData = [
     }
 ];
 
+var purchaseData = [
+    {
+        name    : "RJD Home",
+        type    : "3beli",
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :20,
+            strawberry  :30,
+            greentea    :30,
+            mangga      :20,
+            'teh tarik' :10,
+            coklat      :30,
+            bubblegum   :25,
+            cappucino   :20,
+            taro        :20,
+            grape       :30,
+            kopi        :15,
+            'red velvet':15,
+            leci        :35
+        }
+    },
+    {
+        name    : "Agen 1",
+        type    : "2beli",
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :10,
+            strawberry  :10,
+            greentea    :10,
+            mangga      :10,
+            'teh tarik' :10,
+            coklat      :10,
+            bubblegum   :10,
+            cappucino   :15,
+            taro        :15,
+            grape       :15,
+            kopi        :35,
+            'red velvet':15,
+            leci        :10
+        }
+    },
+    {
+        name    : "Agen 2",
+        type    : "1beli",
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :10,
+            strawberry  :10,
+            greentea    :10,
+            mangga      :20,
+            'teh tarik' :10,
+            coklat      :10,
+            bubblegum   :10,
+            cappucino   :10,
+            taro        :10,
+            grape       :10,
+            kopi        :10,
+            'red velvet':10,
+            leci        :10
+        }
+    }
+];
+
 // var orderData = [
 //     {
 //         custName: "Arif",
@@ -238,6 +305,16 @@ function seedDB(){
                     if(err){console.log(err);} else{
                         console.log("Created new order for " + newOrder.name);
                     }
+                });
+            });
+        }
+    });
+    Purchase.deleteMany({}, (err) => {
+        if(err){console.log(err);} else{
+            console.log("Purchase DB is cleared");
+            purchaseData.forEach(seed => {
+                Purchase.create(seed, (err, newPurchase) => {
+                    console.log("Created new purchase for " + newPurchase.name);
                 });
             });
         }
