@@ -2,25 +2,26 @@ var mongoose = require('mongoose');
 var Menu = require('./models/menu');
 var OrderSchema = require('./models/orderschema');
 var PurchaseSchema = require('./models/purchaseschema');
+var Order = require('./models/order');
 
 var menuData= [
     {
         name: "Pisang",
         emoji: "🍌",
         color: "#f7e92c",
-        stock: 12
+        stock: 15
     },
     {
         name: "Strawberry",
         emoji: "🍓",
         color: "#d53032",
-        stock: 10
+        stock: 20
     },
     {
         name: "Greentea",
         emoji: "🍵",
         color: "#d0f0c0",
-        stock: 4
+        stock: 30
     },
     {
         name: "Teh Tarik",
@@ -32,55 +33,55 @@ var menuData= [
         name: "Mangga",
         emoji: "🍑",
         color: "#ff8243",
-        stock: 5
+        stock: 20
     },
     {
         name: "Coklat",
         emoji: "🍫",
         color: "#d2691e",
-        stock: 20
+        stock: 35
     },
     {
         name: "Bubblegum",
         emoji: "🍶",
         color: "#87ceeb",
-        stock: 4
+        stock: 25
     },
     {
         name: "Cappucino",
         emoji: "☕",
         color: "#b5651d",
-        stock: 5
+        stock: 20
     },
     {
         name: "Taro",
         emoji: "🍠",
         color: "#b19cd9",
-        stock: 8
+        stock: 15
     },
     {
         name: "Grape",
         emoji: "🍇",
         color: "#cc8899",
-        stock: 6
+        stock: 15
     },
     {
         name: "Kopi",
         emoji: "☕",
         color: "#6f4e37",
-        stock: 6
+        stock: 15
     },
     {
         name: "Red Velvet",
         emoji: "🍰",
         color: "#e9967a",
-        stock: 5
+        stock: 20
     },
     {
         name: "Leci",
         emoji: "🍒",
         color: "#f2f2f2",
-        stock: 5
+        stock: 20
     }
 ];
 
@@ -126,6 +127,75 @@ var purchaseScheme = [
     }
 ]
 
+var orderData = [
+    {
+        name    : "arif",
+        type    : "20gros",
+        phoneNum: 81212493669,
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :1,
+            strawberry  :5,
+            greentea    :10,
+            mangga      :0,
+            'teh tarik' :0,
+            coklat      :0,
+            bubblegum   :0,
+            cappucino   :0,
+            taro        :0,
+            grape       :3,
+            kopi        :5,
+            'red velvet':1,
+            leci        :3
+        }
+    },
+    {
+        name    : "Bambang",
+        type    : "10gros",
+        phoneNum: 81212493669,
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :0,
+            strawberry  :1,
+            greentea    :1,
+            mangga      :1,
+            'teh tarik' :0,
+            coklat      :1,
+            bubblegum   :0,
+            cappucino   :1,
+            taro        :1,
+            grape       :1,
+            kopi        :3,
+            'red velvet':1,
+            leci        :0
+        }
+    },
+    {
+        name    : "Budiman",
+        type    : "100gros",
+        phoneNum: 81212493669,
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :10,
+            strawberry  :10,
+            greentea    :10,
+            mangga      :20,
+            'teh tarik' :10,
+            coklat      :10,
+            bubblegum   :5,
+            cappucino   :10,
+            taro        :15,
+            grape       :10,
+            kopi        :10,
+            'red velvet':5,
+            leci        :5
+        }
+    }
+];
+
 // var orderData = [
 //     {
 //         custName: "Arif",
@@ -155,6 +225,18 @@ function seedDB(){
                 Menu.create(seed, function(err, menu){
                     if(err){console.log(err);} else {
                         console.log('Added menu : ' + menu.name);
+                    }
+                });
+            });
+        }
+    });
+    Order.deleteMany({}, (err) => {
+        if(err){console.log(err);} else{
+            console.log("Order db is cleared");
+            orderData.forEach(seed => {
+                Order.create(seed, (err, newOrder) => {
+                    if(err){console.log(err);} else{
+                        console.log("Created new order for " + newOrder.name);
                     }
                 });
             });
