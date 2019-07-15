@@ -7,7 +7,7 @@
 
     <% datas.forEach(function(data){%>
         <div class="thumbnail">
-            <h2><%=data.supplierName%></h2>
+            <h2><%=data.name%></h2>
             <%var mm = data.date.getMonth()%>
             <p><%=data.date.getDate() + " " + month[mm] + " " + data.date.getFullYear()%></p>
             <p><%=data.type%></p>

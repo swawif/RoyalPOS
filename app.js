@@ -306,17 +306,17 @@ app.put('/admin/order/:id/status',function (req,res) {
             //Store Order object in newObject var
             var newOrder = order;
             //Increment the newOrder.orderStatus by 1
-            newOrder.orderStatus = order.orderStatus + 1;
+            newOrder.status = order.status + 1;
             //Check if newOrder.orderStatus is not 1 (if 1, update the stock)
-            if(newOrder.orderStatus === 1){
+            if(newOrder.status === 1){
                 Menu.find({}, (err, menus)=>{
                     if(err){console.log(err);} else {
                         //Loop through menus
                         menus.forEach(function(menu){
                             //Substract the menu stock with the ordered quantity and store it into newStock
-                            var newStock = menu.stock - Number(newOrder.orderDetail[menu.name]);
+                            var newStock = menu.stock - Number(newOrder.detail[menu.name]);
                             //Console.log just to be safe
-                            console.log(menu.stock + " - " + newOrder.orderDetail[menu.name] + " = " + newStock);
+                            console.log(menu.stock + " - " + newOrder.detail[menu.name] + " = " + newStock);
                             //Store the menu in other variable to keep the old one safe
                             var newMenu = menu;
                             //set the new stock into the variable
@@ -333,7 +333,7 @@ app.put('/admin/order/:id/status',function (req,res) {
             }
             //Update the DB
             Order.findByIdAndUpdate(req.params.id, newOrder, {new:true}, (err, updatedStatus)=> {
-                console.log("New status : " + updatedStatus.orderStatus);
+                console.log("New status : " + updatedStatus.status);
                 res.redirect('/admin/order/'+req.params.id);
             });
 
