@@ -3,6 +3,9 @@
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
 // PURCHASE - NEW  -- TODO ADD UPCOMINGORDERS
 // INDEX.ejs -- TODO replace details with 0 if it returns undefined
+// INDEX.ejs -- properly parse the order type
+// /admin/setting/schemas
+// make an auto whatsapp converter
 
 
 //Dependencies
@@ -34,7 +37,7 @@ app.use(express.static(__dirname + "/public"));
 //Passport Config - later
 /*
 app.use(require('express-session')({
-    secret: "",
+    secret: config.secret,
     saveUninitialized: false,
     resave: false
 }));
@@ -45,7 +48,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 */
 
-// Seeder - for later uses
+// Seeder
 seedDB();
 
 //==================================================
@@ -245,16 +248,21 @@ app.get('/admin/order/new',function (req,res) {
 app.post('/admin/order',function (req,res) {
     var orderDetail = req.body.detail;
     var newOrderObj = req.body.query;
+    var orderType = req.body.type;
     console.log(orderDetail);
     //insert the var orderDetail into the Order.orderDetail property
     newOrderObj.detail = orderDetail;
     //set order status as awaiting confirmation
     newOrderObj.status = 0;
-    Order.create(newOrderObj, function(err, newOrder){
+    OrderScheme.findOne({name:orderType}, (err, foundScheme) => {
         if(err){console.log(err);} else {
-            console.log("new order!");
-            console.log(newOrder);
-            res.redirect('/admin/order');
+            newOrderObj.type = foundScheme;
+            Order.create(newOrderObj, (err, newOrder) => {
+                if(err){console.log(err);} else {
+                    console.log("New order created for : " + newOrder.name);
+                    res.redirect('/admin/order');
+                }
+            });
         }
     });
 });
@@ -446,15 +454,18 @@ app.get('/admin/purchase/new',function (req,res) {
 app.post('/admin/purchase', function(req, res){
     var purchaseDetail = req.body.detail;
     var newPurchaseObj = req.body.query;
+    var purchaseDetail = req.body.type;
     //insert the var orderDetail into the Order.orderDetail property
     newPurchaseObj.detail = purchaseDetail;
     //set purchaseStatus as 0
     newPurchaseObj.status = 0;
-    Purchase.create(newPurchaseObj, (err,newPurchase) => {
+    PurchaseScheme.findOne({purchaseDetail}, (err, foundScheme) => {
         if(err){console.log(err);} else {
-            console.log("new purchase!");
-            console.log(newPurchase);
-            res.redirect('/admin/purchase');
+            newPurchaseObj.type = foundScheme;
+            Purchase.create(newPurchaseObj, (err, newPurchase) => {
+                console.log("Created new purchase for : " + newPurchase.name);
+                res.redirect('/admin/purchase');
+            });
         }
     });
 });

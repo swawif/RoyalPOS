@@ -14,16 +14,19 @@
 
             <table class="table">
                 <tr>
+                    <td><strong>Rasa</strong></td>
                     <% menus.forEach(function(menu){%>
                     <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
                     <%});%>
                 </tr>
                 <tr>
+                    <td></td>
                     <% menus.forEach(function(menu){%>
                         <td><%=menu.emoji%></td>
                     <%});%>
                 </tr>
                 <tr>
+                    <td><strong>Pesanan</strong></td>
                     <% menus.forEach(function(menu){%>
                         <td><%=data.detail[menu.name]%></td>
                     <%});%>

@@ -131,7 +131,10 @@ var purchaseScheme = [
 var orderData = [
     {
         name    : "arif",
-        type    : "20gros",
+        type    : {
+            name: "20gros",
+            price: 8000
+        },
         phoneNum: 81212493669,
         date    : Date('2019-06-19T00:00:00.000+00:00'),
         status  : 0,
@@ -153,7 +156,10 @@ var orderData = [
     },
     {
         name    : "Bambang",
-        type    : "10gros",
+        type    : {
+            name: "10gros",
+            price: 9000
+        },
         phoneNum: 81212493669,
         date    : Date('2019-06-19T00:00:00.000+00:00'),
         status  : 0,
@@ -175,7 +181,10 @@ var orderData = [
     },
     {
         name    : "Budiman",
-        type    : "100gros",
+        type    : {
+            name: "100gros",
+            price: 7000
+        },
         phoneNum: 81212493669,
         date    : Date('2019-06-19T00:00:00.000+00:00'),
         status  : 0,
@@ -200,7 +209,10 @@ var orderData = [
 var purchaseData = [
     {
         name    : "RJD Home",
-        type    : "3beli",
+        type    : {
+            name: "3beli",
+            price: 5500
+        },
         date    : Date('2019-06-19T00:00:00.000+00:00'),
         status  : 0,
         detail  : {
@@ -221,7 +233,10 @@ var purchaseData = [
     },
     {
         name    : "Agen 1",
-        type    : "2beli",
+        type    : {
+            name: "2beli",
+            price: 6000
+        },
         date    : Date('2019-06-19T00:00:00.000+00:00'),
         status  : 0,
         detail  : {
@@ -242,7 +257,10 @@ var purchaseData = [
     },
     {
         name    : "Agen 2",
-        type    : "1beli",
+        type    : {
+            name: "2beli",
+            price: 6500
+        },
         date    : Date('2019-06-19T00:00:00.000+00:00'),
         status  : 0,
         detail  : {
@@ -302,8 +320,8 @@ function seedDB(){
             console.log("Order db is cleared");
             orderData.forEach(seed => {
                 Order.create(seed, (err, newOrder) => {
-                    if(err){console.log(err);} else{
-                        console.log("Created new order for " + newOrder.name);
+                    if(err){console.log(err);} else {
+                        console.log("created new order for : " + newOrder.name);
                     }
                 });
             });

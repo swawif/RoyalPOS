@@ -3,7 +3,10 @@ var mongoose = require('mongoose');
 //Schema Setup
 var OrderSchema = new mongoose.Schema({
     name: String, // Name Customer, formerly custName
-    type: String,// Skema Harga (20gros, dll), formerly orderType, linked to orderSchema
+    type: {
+        name: {type:String, lowercase: true},
+        price: Number
+        },  // Skema Harga (20gros, dll), formerly orderType, linked to orderSchema
     phoneNum: Number, // No Telp, formerly phoneNum
     // isBuying: Boolean,// Pembelian atau Penjualan
     date: Date,  // Estimasi tanggal kedatangan, formerly orderDate

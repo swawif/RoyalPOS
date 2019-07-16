@@ -7,29 +7,30 @@
 <form action="/admin/<%=url%>" method="POST">
     <table class="table">
         <tr>
+            <td>Rasa</td>
             <% menus.forEach(function(menu){%>
-                <th><%=menu.name.substring(0,3).toUpperCase()%></th>
+                <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
                 <%});%>
         </tr>
         <tr>
+            <td></td>
             <% menus.forEach(function(menu){%>
                 <td><%=menu.emoji%></td>
             <%});%>
         </tr>
         
         <tr>
+            <td>Stok<br>Saat Ini</td>
             <% var menuArr = []; %>
             <% menus.forEach(function(menu){%>
-                <td><%=menu.stock%></td>
+                <td><strong><%=menu.stock%></strong></td>
                 <% menuArr.push(menu.stock) %>
             <%});%>
         </tr>
         <!-- Incoming Orders -->
         <tr>
             <% upcomingOrderArr = []; %>
-            <td colspan="100"><strong>Pesanan akan datang</strong></td>
-        </tr>
-        <tr>
+            <td>Pesanan<br>Customer</td>
             <% upcomingOrders.forEach(function(upcomingOrder){%>
                 <td style="color: red"><%=upcomingOrder%></td>
                 <% upcomingOrderArr.push(upcomingOrder) %>
@@ -38,9 +39,7 @@
 
         <!-- Incoming Purchases -->
         <tr>
-            <td colspan="100"><strong>Pembelian akan datang</strong></td>
-        </tr>
-        <tr>
+            <td>Stok<br>Akan Datang</td>
             <% upcomingPurchaseArr = []; %>
             <% upcomingPurchases.forEach(function(upcomingPurchase){%>
                 <td><%=upcomingPurchase%></td>
@@ -50,9 +49,7 @@
 
         <!-- Next Stock -->
         <tr>
-            <td colspan="100"><strong>Stok Selanjutnya</strong></td>
-        </tr>
-        <tr>
+            <td>Next Stock</td>
             <% 
             var nextStocks = [];
             for(i=0; i < menuArr.length; i++){
@@ -65,9 +62,7 @@
         </tr>
 
         <tr>
-            <td colspan="100"><strong>YOUR ORDER</strong></td>
-        </tr>
-        <tr>
+            <td><strong>Pesanan Anda :</strong></td>
             <% menus.forEach(function(menu){%>
                 <td>
                 <input class="orderDetail" type="number" name="detail[<%=menu.name%>]" id="<%=menu.name%>">
@@ -83,7 +78,7 @@
     <%} else if(transactionType === "purchase"){%>
 
     <%}%>
-    <select name="query[type]" required>
+    <select name="type" required>
         <%schemas.forEach(function(schema){%>
             <option value="<%=schema.name%>"><%=schema.name%> - <%=schema.price%></option>
         <%});%>
