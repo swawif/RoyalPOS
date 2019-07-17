@@ -3,32 +3,34 @@
 <div class="container">        
 <h1>Buat Pembelian Baru</h1>
 
-<form action="/admin/purchase" method="POST">
+<% var url = transactionType %>
+<form action="/admin/<%=url%>" method="POST">
     <table class="table">
         <tr>
+            <td>Rasa</td>
             <% menus.forEach(function(menu){%>
-                <th><%=menu.name.substring(0,3).toUpperCase()%></th>
+                <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
                 <%});%>
         </tr>
         <tr>
+            <td></td>
             <% menus.forEach(function(menu){%>
                 <td><%=menu.emoji%></td>
             <%});%>
         </tr>
         
         <tr>
+            <td>Stok<br>Saat Ini</td>
             <% var menuArr = []; %>
             <% menus.forEach(function(menu){%>
-                <td><%=menu.stock%></td>
+                <td><strong><%=menu.stock%></strong></td>
                 <% menuArr.push(menu.stock) %>
             <%});%>
         </tr>
         <!-- Incoming Orders -->
         <tr>
             <% upcomingOrderArr = []; %>
-            <td colspan="100"><strong>Pesanan akan datang</strong></td>
-        </tr>
-        <tr>
+            <td>Pesanan<br>Customer</td>
             <% upcomingOrders.forEach(function(upcomingOrder){%>
                 <td style="color: red"><%=upcomingOrder%></td>
                 <% upcomingOrderArr.push(upcomingOrder) %>
@@ -37,9 +39,7 @@
 
         <!-- Incoming Purchases -->
         <tr>
-            <td colspan="100"><strong>Pembelian akan datang</strong></td>
-        </tr>
-        <tr>
+            <td>Stok<br>Akan Datang</td>
             <% upcomingPurchaseArr = []; %>
             <% upcomingPurchases.forEach(function(upcomingPurchase){%>
                 <td><%=upcomingPurchase%></td>
@@ -49,9 +49,7 @@
 
         <!-- Next Stock -->
         <tr>
-            <td colspan="100"><strong>Stok Selanjutnya</strong></td>
-        </tr>
-        <tr>
+            <td>Next Stock</td>
             <% 
             var nextStocks = [];
             for(i=0; i < menuArr.length; i++){
@@ -64,34 +62,30 @@
         </tr>
 
         <tr>
-            <td colspan="100"><strong>YOUR ORDER</strong></td>
-        </tr>
-        <tr>
+            <td><strong>Pesanan Anda :</strong></td>
             <% menus.forEach(function(menu){%>
                 <td>
-                <input class="orderDetail" type="number" name="purchaseDetail[<%=menu.name%>]" id="<%=menu.name%>">
+                <input class="orderDetail" type="number" name="detail[<%=menu.name%>]" id="<%=menu.name%>">
                 </td>
             <%});%>
         </tr>
     </table>
       
     <p>Info pemesan :</p>
-    <input type="text" name="purchase[supplierName]" placeholder="Nama Pemesan/Supplier" value="RJD Home" required>
-    <select name="purchase[purchaseType]" required>
+    <input type="text" name="query[name]" placeholder="Nama Pemesan/Supplier" required>
+    <%if(transactionType === "order"){%>
+    <input type="text" name="query[phoneNum]" placeholder="No Telefon" required>
+    <%} else if(transactionType === "purchase"){%>
+
+    <%}%>
+    <select name="type" required>
         <%schemas.forEach(function(schema){%>
             <option value="<%=schema.name%>"><%=schema.name%> - <%=schema.price%></option>
         <%});%>
     </select>
-    <input type="date" name="purchase[purchaseDate]" placeholder="Untuk Hari" required>
+    <input type="date" name="query[date]" placeholder="Untuk Hari" required>
     
-    <!--
-    supplierName: String, // Name Customer
-    purchaseType: String,// 1beli, 2beli, 3beli
-    purchaseDate: Date,  // Estimasi tanggal kedatangan
-    purchaseStatus: String, // Status pesanan,Menunggu Konfirmasi, Order di Proses, Sudah di kirim, Selesai di edit di /order/:id/edit
-    purchaseDetail: Object  //Detail pesanan -->
-        
-        <button class="btn btn-primary">Purchase!</button>
+        <button class="btn btn-primary">Submit!</button>
     </form>
 </div>
 

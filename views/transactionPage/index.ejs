@@ -1,37 +1,39 @@
 <% include ../partials/header %>
-<% include ../helper %>
 <% var month = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];%>
+<% var url = transactionType %>
 
 <div class="container">
-    <h1>Order Index Page</h1>
+    <h1>Daftar <%=url%></h1>
 
-    <% orders.forEach(function(order){%>
+    <% datas.forEach(function(data){%>
         <div class="thumbnail">
-            <h2><%=order.custName%></h2>
-            <h4><%=order.phoneNum%></h4>
-            <%var mm = order.orderDate.getMonth()%>
-            <p><%=order.orderDate.getDate() + " " + month[mm] + " " + order.orderDate.getFullYear()%></p>
-            <p><%=order.orderType%></p>
+            <h2><%=data.name%></h2>
+            <%var mm = data.date.getMonth()%>
+            <p><%=data.date.getDate() + " " + month[mm] + " " + data.date.getFullYear()%></p>
+            <p><%=data.type%></p>
 
             <table class="table">
                 <tr>
+                    <td><strong>Rasa</strong></td>
                     <% menus.forEach(function(menu){%>
                     <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
                     <%});%>
                 </tr>
                 <tr>
+                    <td></td>
                     <% menus.forEach(function(menu){%>
                         <td><%=menu.emoji%></td>
                     <%});%>
                 </tr>
                 <tr>
+                    <td><strong>Pesanan</strong></td>
                     <% menus.forEach(function(menu){%>
-                        <td><%=order.orderDetail[menu.name]%></td>
+                        <td><%=data.detail[menu.name]%></td>
                     <%});%>
                 </tr>
             </table>
             <p>Status :</p>
-            <%switch (order.orderStatus) {
+            <%switch (data.status) {
                 case 0 :%>
                     <p>Menunggu Konfirmasi</p>
                     <%break;%>
@@ -49,7 +51,7 @@
                     <p>Err: No Status</p>
                     <%break;%>
             <%}%>
-            <a class="btn btn-primary" href="/admin/order/<%=order._id%>">Detail</a>
+            <a class="btn btn-primary" href="/admin/<%=url%>/<%=data._id%>">Detail</a>
         </div>
     <%})%>
     

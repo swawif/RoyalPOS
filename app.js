@@ -1,7 +1,10 @@
 // بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
 //TODOS
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
-// PURCHASE - NEW  -- TODO ADD UPCOMINGORDERS
+// INDEX.ejs -- TODO replace details with 0 if it returns undefined
+// INDEX.ejs -- properly parse the order type
+// /admin/setting/schemas
+// make an auto whatsapp converter
 
 
 //Dependencies
@@ -33,7 +36,7 @@ app.use(express.static(__dirname + "/public"));
 //Passport Config - later
 /*
 app.use(require('express-session')({
-    secret: "",
+    secret: config.secret,
     saveUninitialized: false,
     resave: false
 }));
@@ -44,7 +47,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 */
 
-// Seeder - for later uses
+// Seeder
 seedDB();
 
 //==================================================
@@ -157,7 +160,7 @@ app.get('/admin/order/',function (req,res) {
         if(err){console.log(err)} else {
             Menu.find({},(err,menus)=>{
                 if(err){console.log(err)} else {
-                    res.render('admin/orderIndex', {orders:orders, menus:menus});
+                    res.render('transactionPage/index', {datas:orders, menus:menus, transactionType:"order"});
                 }
             });
         }
@@ -189,12 +192,12 @@ app.get('/admin/order/new',function (req,res) {
                             //Loop through orders array
                             purchases.forEach(purchase => {
                                 //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(purchase.purchaseStatus < 1){
+                                if(purchase.status < 1){
                                     //set index
                                     var idx = 0;
                                     //Loop through menus array
                                     menus.forEach(menu => {
-                                        var purchaseDetail = Number(purchase.purchaseDetail[menu.name]);
+                                        var purchaseDetail = Number(purchase.detail[menu.name]);
                                         //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
                                         upcomingPurchases[idx] += purchaseDetail
                                         idx++;
@@ -205,12 +208,12 @@ app.get('/admin/order/new',function (req,res) {
 
                             orders.forEach(order => {
                                 //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(order.orderStatus < 1){
+                                if(order.status < 1){
                                     //set index
                                     var idx = 0;
                                     //Loop through menus array
                                     menus.forEach(menu => {
-                                        var orderDetail = Number(order.orderDetail[menu.name]);
+                                        var orderDetail = Number(order.detail[menu.name]);
                                         //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
                                         upcomingOrders[idx] += orderDetail
                                         idx++;
@@ -219,9 +222,15 @@ app.get('/admin/order/new',function (req,res) {
                                 console.log(upcomingOrders);
                             });
         
-                            PurchaseScheme.find({},(err, schemas) => {
+                            OrderScheme.find({},(err, schemas) => {
                                 if(err){console.log(err);} else {
-                                    res.render('admin/newOrder', {menus : menus, schemas : schemas, upcomingOrders : upcomingOrders, upcomingPurchases : upcomingPurchases});
+                                    res.render('transactionPage/new', {
+                                        menus : menus,
+                                        schemas : schemas,
+                                        upcomingOrders : upcomingOrders,
+                                        upcomingPurchases : upcomingPurchases,
+                                        transactionType:"order"
+                                    });
                                     console.log("Adding new order...");
                                 }
                             });
@@ -236,17 +245,23 @@ app.get('/admin/order/new',function (req,res) {
 
 //CREATE
 app.post('/admin/order',function (req,res) {
-    var orderDetail = req.body.orderDetail;
-    var newOrderObj = req.body.order;
+    var orderDetail = req.body.detail;
+    var newOrderObj = req.body.query;
+    var orderType = req.body.type;
+    console.log(orderDetail);
     //insert the var orderDetail into the Order.orderDetail property
-    newOrderObj.orderDetail = orderDetail;
+    newOrderObj.detail = orderDetail;
     //set order status as awaiting confirmation
-    newOrderObj.orderStatus = 0;
-    Order.create(newOrderObj, function(err, newOrder){
+    newOrderObj.status = 0;
+    OrderScheme.findOne({name:orderType}, (err, foundScheme) => {
         if(err){console.log(err);} else {
-            console.log("new order!");
-            console.log(newOrder);
-            res.redirect('/admin/order');
+            newOrderObj.type = foundScheme;
+            Order.create(newOrderObj, (err, newOrder) => {
+                if(err){console.log(err);} else {
+                    console.log("New order created for : " + newOrder.name);
+                    res.redirect('/admin/order');
+                }
+            });
         }
     });
 });
@@ -257,7 +272,7 @@ app.get('/admin/order/:id',function (req,res) {
         if(err){console.log(err);}else{
             Menu.find({}, (err, menus)=>{
                 if(err){console.log(err);}else{
-                    res.render('admin/orderDetail', {order:order,menus:menus});
+                    res.render('transactionPage/show', {data:order,menus:menus, transactionType:"order"});
                 }
             });
         }
@@ -270,7 +285,7 @@ app.get('/admin/order/:id/edit',function (req,res) {
         if(err){console.log(err);}else{
             Menu.find({}, (err, menus)=>{
                 if(err){console.log(err);}else{
-                    res.render('admin/orderEdit', {order:order,menus:menus});
+                    res.render('transactionPage/edit', {data:order, menus:menus, transactionType:"order"});
                 }
             });
         }
@@ -279,11 +294,11 @@ app.get('/admin/order/:id/edit',function (req,res) {
 
 //UPDATE
 app.put('/admin/order/:id',function (req,res) {
-    var orderDetail = req.body.orderDetail;
-    var newOrderObj = req.body.order;
+    var orderDetail = req.body.detail;
+    var newOrderObj = req.body.query;
     console.log(newOrderObj);
     console.log(orderDetail);
-    newOrderObj.orderDetail = orderDetail;
+    newOrderObj.detail = orderDetail;
     Order.findByIdAndUpdate(req.params.id, newOrderObj, {new: true}, (err,updatedOrder)=> {
         console.log("Updated entry for " + req.params.id);
         console.log(updatedOrder);
@@ -298,17 +313,17 @@ app.put('/admin/order/:id/status',function (req,res) {
             //Store Order object in newObject var
             var newOrder = order;
             //Increment the newOrder.orderStatus by 1
-            newOrder.orderStatus = order.orderStatus + 1;
+            newOrder.status = order.status + 1;
             //Check if newOrder.orderStatus is not 1 (if 1, update the stock)
-            if(newOrder.orderStatus === 1){
+            if(newOrder.status === 1){
                 Menu.find({}, (err, menus)=>{
                     if(err){console.log(err);} else {
                         //Loop through menus
                         menus.forEach(function(menu){
                             //Substract the menu stock with the ordered quantity and store it into newStock
-                            var newStock = menu.stock - Number(newOrder.orderDetail[menu.name]);
+                            var newStock = menu.stock - Number(newOrder.detail[menu.name]);
                             //Console.log just to be safe
-                            console.log(menu.stock + " - " + newOrder.orderDetail[menu.name] + " = " + newStock);
+                            console.log(menu.stock + " - " + newOrder.detail[menu.name] + " = " + newStock);
                             //Store the menu in other variable to keep the old one safe
                             var newMenu = menu;
                             //set the new stock into the variable
@@ -325,7 +340,7 @@ app.put('/admin/order/:id/status',function (req,res) {
             }
             //Update the DB
             Order.findByIdAndUpdate(req.params.id, newOrder, {new:true}, (err, updatedStatus)=> {
-                console.log("New status : " + updatedStatus.orderStatus);
+                console.log("New status : " + updatedStatus.status);
                 res.redirect('/admin/order/'+req.params.id);
             });
 
@@ -347,7 +362,11 @@ app.get('/admin/purchase',function (req,res) {
         if(err){console.log(err);} else{
             Menu.find({}, (err,menus) => {
                 if(err){console.log(err);} else {
-                    res.render('purchase/index', {purchases : purchases, menus : menus});
+                    res.render('transactionPage/index', {
+                        datas           : purchases,
+                        menus           : menus,
+                        transactionType : "purchase"
+                    });
                 }
             });
         }
@@ -379,12 +398,12 @@ app.get('/admin/purchase/new',function (req,res) {
                             //Loop through orders array
                             purchases.forEach(purchase => {
                                 //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(purchase.purchaseStatus < 1){
+                                if(purchase.status < 1){
                                     //set index
                                     var idx = 0;
                                     //Loop through menus array
                                     menus.forEach(menu => {
-                                        var purchaseDetail = Number(purchase.purchaseDetail[menu.name]);
+                                        var purchaseDetail = Number(purchase.detail[menu.name]);
                                         //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
                                         upcomingPurchases[idx] += purchaseDetail
                                         idx++;
@@ -395,12 +414,12 @@ app.get('/admin/purchase/new',function (req,res) {
 
                             orders.forEach(order => {
                                 //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(order.orderStatus < 1){
+                                if(order.status < 1){
                                     //set index
                                     var idx = 0;
                                     //Loop through menus array
                                     menus.forEach(menu => {
-                                        var orderDetail = Number(order.orderDetail[menu.name]);
+                                        var orderDetail = Number(order.detail[menu.name]);
                                         //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
                                         upcomingOrders[idx] += orderDetail
                                         idx++;
@@ -411,7 +430,13 @@ app.get('/admin/purchase/new',function (req,res) {
         
                             PurchaseScheme.find({},(err, schemas) => {
                                 if(err){console.log(err);} else {
-                                    res.render('purchase/new', {menus : menus, schemas : schemas, upcomingOrders : upcomingOrders, upcomingPurchases : upcomingPurchases});
+                                    res.render('transactionPage/new', {
+                                        menus : menus,
+                                        schemas : schemas,
+                                        upcomingOrders : upcomingOrders,
+                                        upcomingPurchases : upcomingPurchases,
+                                        transactionType : "purchase"
+                                    });
                                     console.log("Adding new order...");
                                 }
                             });
@@ -426,17 +451,20 @@ app.get('/admin/purchase/new',function (req,res) {
 
 //CREATE
 app.post('/admin/purchase', function(req, res){
-    var purchaseDetail = req.body.purchaseDetail;
-    var newPurchaseObj = req.body.purchase;
+    var purchaseDetail = req.body.detail;
+    var newPurchaseObj = req.body.query;
+    var purchaseDetail = req.body.type;
     //insert the var orderDetail into the Order.orderDetail property
-    newPurchaseObj.purchaseDetail = purchaseDetail;
+    newPurchaseObj.detail = purchaseDetail;
     //set purchaseStatus as 0
-    newPurchaseObj.purchaseStatus = 0;
-    Purchase.create(newPurchaseObj, (err,newPurchase) => {
+    newPurchaseObj.status = 0;
+    PurchaseScheme.findOne({purchaseDetail}, (err, foundScheme) => {
         if(err){console.log(err);} else {
-            console.log("new purchase!");
-            console.log(newPurchase);
-            res.redirect('/admin/purchase');
+            newPurchaseObj.type = foundScheme;
+            Purchase.create(newPurchaseObj, (err, newPurchase) => {
+                console.log("Created new purchase for : " + newPurchase.name);
+                res.redirect('/admin/purchase');
+            });
         }
     });
 });
@@ -447,7 +475,11 @@ app.get('/admin/purchase/:id', function(req, res){
         if(err){console.log(err);} else {
             Menu.find({}, (err, menus) => {
                 if(err){console.log(err);} else {
-                    res.render('purchase/show', {purchase:purchase, menus:menus});
+                    res.render('transactionPage/show', {
+                        data:purchase,
+                        menus:menus,
+                        transactionType: "purchase"
+                    });
                 }
             });
         }
@@ -460,7 +492,11 @@ app.get('/admin/purchase/:id/edit', function(req, res){
         if(err){console.log(err);} else {
             Menu.find({}, (err, menus) => {
                 if(err){console.log(err);} else {
-                    res.render('purchase/edit', {purchase : purchase, menus : menus});
+                    res.render('transactionPage/edit', {
+                        data : purchase,
+                        menus : menus,
+                        transactionType: "purchase"
+                    });
                 }
             });
         }
@@ -472,13 +508,13 @@ app.put('/admin/purchase/:id/status', function(req, res){
     Purchase.findById(req.params.id, (err, purchase) => {
         if(err){console.log(err);} else {
             var newPurchase = purchase;
-            newPurchase.purchaseStatus = purchase.purchaseStatus + 1;
-            if(newPurchase.purchaseStatus === 1){
+            newPurchase.status = purchase.status + 1;
+            if(newPurchase.status === 1){
                 Menu.find({}, (err, menus) => {
                     if(err){console.log(err);} else {
                         menus.forEach(menu => {
-                            var newStock = menu.stock + Number(newPurchase.purchaseDetail[menu.name]);
-                            console.log(menu.stock + " + " + newPurchase.purchaseDetail[menu.name] + " = " + newStock);
+                            var newStock = menu.stock + Number(newPurchase.detail[menu.name]);
+                            console.log(menu.stock + " + " + newPurchase.detail[menu.name] + " = " + newStock);
                             var newMenu = menu;
                             newMenu.stock = newStock;
                             Menu.findOneAndUpdate({name: menu.name}, newMenu, {new:true}, (err, updatedMenu) => {
@@ -491,7 +527,7 @@ app.put('/admin/purchase/:id/status', function(req, res){
                 });
             }
         Purchase.findByIdAndUpdate(req.params.id, newPurchase, {new:true}, (err, updatedStatus) => {
-            console.log("New Status : " + updatedStatus.purchaseStatus);
+            console.log("New Status : " + updatedStatus.status);
             res.redirect('/admin/purchase/' + req.params.id);
         });
         }
@@ -500,9 +536,9 @@ app.put('/admin/purchase/:id/status', function(req, res){
 
 //UPDATE
 app.put('/admin/purchase/:id', function(req, res){
-    var purchaseDetail = req.body.purchaseDetail;
-    var newPurchaseObj = req.body.purchase;
-    newPurchaseObj.purchaseDetail = purchaseDetail;
+    var purchaseDetail = req.body.detail;
+    var newPurchaseObj = req.body.query;
+    newPurchaseObj.detail = purchaseDetail;
     console.log(newPurchaseObj)
     Purchase.findByIdAndUpdate(req.params.id, newPurchaseObj, {new: true}, (err,updatedOrder)=> {
         if(err){console.log(err);} else {

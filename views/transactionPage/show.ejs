@@ -1,12 +1,14 @@
 <% include ../partials/header %>
+<% var month = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];%>
+<%var url = transactionType%>
 
 <div class="container">
-    <h1>Order Detail Page</h1>
+    <h1><%=url%> Detail Page</h1>
         <div class="thumbnail">
-            <h2><%=order.custName%></h2>
-            <h4><%=order.phoneNum%></h4>
-            <p><%=order.orderDate%></p>
-            <p><%=order.orderType%></p>
+            <h2><%=data.name%></h2>
+            <%var mm = data.date.getMonth()%>
+            <p><%=data.date.getDate() + " " + month[mm] + " " + data.date.getFullYear()%></p>
+            <p><%=data.type%></p>
 
             <table class="table">
                 <tr>
@@ -21,45 +23,45 @@
                 </tr>
                 <tr>
                     <% menus.forEach(function(menu){%>
-                        <td><%=order.orderDetail[menu.name]%></td>
+                        <td><%=data.detail[menu.name]%></td>
                     <%});%>
                 </tr>
             </table>
-            <p>Status :</p>
-            <%switch (order.orderStatus) {
+            <p>Status :
+            <%switch (data.status) {
                 case 0 :%>
-                    <p>Menunggu Konfirmasi</p>
-                    <form action="/admin/order/<%=order._id%>/status?_method=PUT" method="POST">
+                    Menunggu Konfirmasi</p>
+                    <form action="/admin/<%=url%>/<%=data._id%>/status?_method=PUT" method="POST">
                         <button class="btn btn-warning">Konfirmasi dan siapkan</button>
                     </form>
                     <%break;%>
                 <%case 1 :%>
-                    <p>Pesanan sedang diproses - Stok sudah berubah</p>
+                    Pesanan sedang diproses - Stok sudah berubah</p>
                     <!-- <a href="#" class="btn btn-primary">Kirim pesanan</a> -->
-                    <form action="/admin/order/<%=order._id%>/status?_method=PUT" method="POST">
+                    <form action="/admin/<%=url%>/<%=data._id%>/status?_method=PUT" method="POST">
                         <button class="btn btn-primary">Kirim pesanan</button>
                     </form>
                     <%break;%>
                 <%case 2 :%>
-                    <p>Pesanan terkirim</p>
+                    Pesanan terkirim</p>
                     <!-- <a href="#" class="btn btn-primary">Konfirmasi Selesai</a> -->
-                    <form action="/admin/order/<%=order._id%>/status?_method=PUT" method="POST">
+                    <form action="/admin/<%=url%>/<%=data._id%>/status?_method=PUT" method="POST">
                         <button class="btn btn-success">Konfirmasi Selesai</button>
                     </form>
                     <%break;%>
                 <%case 3 :%>
-                    <p>Selesai</p>
+                    Selesai</p>
                     <%break;%>
             
                 <%default:%>
-                    <p>Err: No Status</p>
+                    Err: No Status</p>
                     <%break;%>
             <%}%>
-            <form action="/admin/order/<%=order._id%>?_method=DELETE" method="POST">
+            <form action="/admin/<%=url%>/<%=data._id%>?_method=DELETE" method="POST">
                 <button class="btn btn-danger">Hapus Pesanan</button>
             </form>
 
-            <a class="btn btn-default" href="/admin/order/<%=order._id%>/edit">Edit</a>
+            <a class="btn btn-default" href="/admin/<%=url%>/<%=data._id%>/edit">Edit</a>
 
         </div>
     

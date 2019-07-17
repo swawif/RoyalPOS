@@ -2,25 +2,27 @@ var mongoose = require('mongoose');
 var Menu = require('./models/menu');
 var OrderSchema = require('./models/orderschema');
 var PurchaseSchema = require('./models/purchaseschema');
+var Order = require('./models/order');
+var Purchase = require('./models/purchase');
 
 var menuData= [
     {
         name: "Pisang",
         emoji: "🍌",
         color: "#f7e92c",
-        stock: 12
+        stock: 15
     },
     {
         name: "Strawberry",
         emoji: "🍓",
         color: "#d53032",
-        stock: 10
+        stock: 20
     },
     {
         name: "Greentea",
         emoji: "🍵",
         color: "#d0f0c0",
-        stock: 4
+        stock: 30
     },
     {
         name: "Teh Tarik",
@@ -32,55 +34,55 @@ var menuData= [
         name: "Mangga",
         emoji: "🍑",
         color: "#ff8243",
-        stock: 5
+        stock: 20
     },
     {
         name: "Coklat",
         emoji: "🍫",
         color: "#d2691e",
-        stock: 20
+        stock: 35
     },
     {
         name: "Bubblegum",
         emoji: "🍶",
         color: "#87ceeb",
-        stock: 4
+        stock: 25
     },
     {
         name: "Cappucino",
         emoji: "☕",
         color: "#b5651d",
-        stock: 5
+        stock: 20
     },
     {
         name: "Taro",
         emoji: "🍠",
         color: "#b19cd9",
-        stock: 8
+        stock: 15
     },
     {
         name: "Grape",
         emoji: "🍇",
         color: "#cc8899",
-        stock: 6
+        stock: 15
     },
     {
         name: "Kopi",
         emoji: "☕",
         color: "#6f4e37",
-        stock: 6
+        stock: 15
     },
     {
         name: "Red Velvet",
         emoji: "🍰",
         color: "#e9967a",
-        stock: 5
+        stock: 20
     },
     {
         name: "Leci",
         emoji: "🍒",
         color: "#f2f2f2",
-        stock: 5
+        stock: 20
     }
 ];
 
@@ -126,6 +128,159 @@ var purchaseScheme = [
     }
 ]
 
+var orderData = [
+    {
+        name    : "arif",
+        type    : {
+            name: "20gros",
+            price: 8000
+        },
+        phoneNum: 81212493669,
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :1,
+            strawberry  :5,
+            greentea    :10,
+            mangga      :0,
+            'teh tarik' :0,
+            coklat      :0,
+            bubblegum   :0,
+            cappucino   :0,
+            taro        :0,
+            grape       :3,
+            kopi        :5,
+            'red velvet':1,
+            leci        :3
+        }
+    },
+    {
+        name    : "Bambang",
+        type    : {
+            name: "10gros",
+            price: 9000
+        },
+        phoneNum: 81212493669,
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :0,
+            strawberry  :1,
+            greentea    :1,
+            mangga      :1,
+            'teh tarik' :0,
+            coklat      :1,
+            bubblegum   :0,
+            cappucino   :1,
+            taro        :1,
+            grape       :1,
+            kopi        :3,
+            'red velvet':1,
+            leci        :0
+        }
+    },
+    {
+        name    : "Budiman",
+        type    : {
+            name: "100gros",
+            price: 7000
+        },
+        phoneNum: 81212493669,
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :10,
+            strawberry  :10,
+            greentea    :10,
+            mangga      :20,
+            'teh tarik' :10,
+            coklat      :10,
+            bubblegum   :5,
+            cappucino   :10,
+            taro        :15,
+            grape       :10,
+            kopi        :10,
+            'red velvet':5,
+            leci        :5
+        }
+    }
+];
+
+var purchaseData = [
+    {
+        name    : "RJD Home",
+        type    : {
+            name: "3beli",
+            price: 5500
+        },
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :20,
+            strawberry  :30,
+            greentea    :30,
+            mangga      :20,
+            'teh tarik' :10,
+            coklat      :30,
+            bubblegum   :25,
+            cappucino   :20,
+            taro        :20,
+            grape       :30,
+            kopi        :15,
+            'red velvet':15,
+            leci        :35
+        }
+    },
+    {
+        name    : "Agen 1",
+        type    : {
+            name: "2beli",
+            price: 6000
+        },
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :10,
+            strawberry  :10,
+            greentea    :10,
+            mangga      :10,
+            'teh tarik' :10,
+            coklat      :10,
+            bubblegum   :10,
+            cappucino   :15,
+            taro        :15,
+            grape       :15,
+            kopi        :35,
+            'red velvet':15,
+            leci        :10
+        }
+    },
+    {
+        name    : "Agen 2",
+        type    : {
+            name: "2beli",
+            price: 6500
+        },
+        date    : Date('2019-06-19T00:00:00.000+00:00'),
+        status  : 0,
+        detail  : {
+            pisang      :10,
+            strawberry  :10,
+            greentea    :10,
+            mangga      :20,
+            'teh tarik' :10,
+            coklat      :10,
+            bubblegum   :10,
+            cappucino   :10,
+            taro        :10,
+            grape       :10,
+            kopi        :10,
+            'red velvet':10,
+            leci        :10
+        }
+    }
+];
+
 // var orderData = [
 //     {
 //         custName: "Arif",
@@ -156,6 +311,28 @@ function seedDB(){
                     if(err){console.log(err);} else {
                         console.log('Added menu : ' + menu.name);
                     }
+                });
+            });
+        }
+    });
+    Order.deleteMany({}, (err) => {
+        if(err){console.log(err);} else{
+            console.log("Order db is cleared");
+            orderData.forEach(seed => {
+                Order.create(seed, (err, newOrder) => {
+                    if(err){console.log(err);} else {
+                        console.log("created new order for : " + newOrder.name);
+                    }
+                });
+            });
+        }
+    });
+    Purchase.deleteMany({}, (err) => {
+        if(err){console.log(err);} else{
+            console.log("Purchase DB is cleared");
+            purchaseData.forEach(seed => {
+                Purchase.create(seed, (err, newPurchase) => {
+                    console.log("Created new purchase for " + newPurchase.name);
                 });
             });
         }
