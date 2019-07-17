@@ -1,7 +1,6 @@
 // بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
 //TODOS
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
-// PURCHASE - NEW  -- TODO ADD UPCOMINGORDERS
 // INDEX.ejs -- TODO replace details with 0 if it returns undefined
 // INDEX.ejs -- properly parse the order type
 // /admin/setting/schemas
