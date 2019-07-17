@@ -26,6 +26,7 @@
         </tr>
         <tr>
             <% menus.forEach(function(menu){%>
+            <%if(data.detail[menu.name] === undefined){data.detail[menu.name] = 0;}%>
                 <td>
                 <input class="orderDetail" type="number" name="detail[<%=menu.name%>]" id="<%=menu.name%>" value="<%=data.detail[menu.name]%>">
                 </td>
@@ -36,7 +37,7 @@
     <p>Info pemesan :</p>
     <input type="text" name="query[name]" placeholder="Nama Pemesan/Supplier" required value="<%=data.name%>">
     <%if (transactionType === "order") {%>
-        <input type="text" name="query[phoneNum]" placeholder="skema penjualan" required value="<%=data.phoneNum%>">
+        <input type="text" name="query[phoneNum]" placeholder="Nomor Telefon" required value="<%=data.phoneNum%>">
     <%}%>
     <%
     var dd = data.date.getDate();
@@ -44,7 +45,11 @@
     if (MM < 10){MM = "0" + MM;} else {MM = "1" + MM;}
     var yyyy = data.date.getFullYear();
     %>
-    <input type="text" name="query[type]" placeholder="skema penjualan" required value="<%=data.type%>">
+    <select name="type" required>
+        <%schemas.forEach(function(schema){%>
+            <option value="<%=schema.name%>"><%=schema.name%> - <%=schema.price%></option>
+        <%});%>
+    </select>
     <input type="date" name="query[date]" placeholder="Untuk Hari" required value="<%=yyyy + "-" + MM + "-" + dd%>">
     
       

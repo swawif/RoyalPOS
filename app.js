@@ -1,10 +1,11 @@
 // بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
 //TODOS
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
-// INDEX.ejs -- TODO replace details with 0 if it returns undefined
-// INDEX.ejs -- properly parse the order type
 // /admin/setting/schemas
 // make an auto whatsapp converter
+// EDIT.ejs -- Make the type field use dropdown instead of textbox
+// /admin/*/edit -- Bikin suppoprt untuk schema, harus bisa kirim data typeSchema
+// /admin/*/:id PUT -- Bikin support untuk ganti schema pakai cara /admin/*/new
 
 
 //Dependencies

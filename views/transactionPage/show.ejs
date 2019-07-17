@@ -23,6 +23,9 @@
                 </tr>
                 <tr>
                     <% menus.forEach(function(menu){%>
+                    <% if(data.detail[menu.name] === undefined){
+                            data.detail[menu.name] = 0;
+                        } %>
                         <td><%=data.detail[menu.name]%></td>
                     <%});%>
                 </tr>
