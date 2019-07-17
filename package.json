@@ -1,6 +1,6 @@
 {
   "name": "rjdpos",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A simple POS for Royal Jelly Drink",
   "main": "app.js",
   "scripts": {
