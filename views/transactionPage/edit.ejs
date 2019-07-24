@@ -47,7 +47,11 @@
     %>
     <select name="type" required>
         <%schemas.forEach(function(schema){%>
-            <option value="<%=schema.name%>"><%=schema.name%> - <%=schema.price%></option>
+            <option value="<%=schema.name%>"
+            <%if(data.type.name === schema.name){%>
+                selected="selected"
+            <%}%>
+            ><%=schema.name%> - <%=schema.price%></option>
         <%});%>
     </select>
     <input type="date" name="query[date]" placeholder="Untuk Hari" required value="<%=yyyy + "-" + MM + "-" + dd%>">

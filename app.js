@@ -3,9 +3,6 @@
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
 // /admin/setting/schemas
 // make an auto whatsapp converter
-// EDIT.ejs -- Make the type field use dropdown instead of textbox
-// /admin/*/edit -- Bikin suppoprt untuk schema, harus bisa kirim data typeSchema
-// /admin/*/:id PUT -- Bikin support untuk ganti schema pakai cara /admin/*/new
 
 
 //Dependencies
@@ -155,6 +152,7 @@ app.delete('/admin/menu/:id',function (req,res) {
 
 
 //========= ORDER ROUTE ============================
+
 //INDEX - Show all orders
 app.get('/admin/order/',function (req,res) {
     Order.find({},(err, orders)=>{
@@ -286,7 +284,17 @@ app.get('/admin/order/:id/edit',function (req,res) {
         if(err){console.log(err);}else{
             Menu.find({}, (err, menus)=>{
                 if(err){console.log(err);}else{
-                    res.render('transactionPage/edit', {data:order, menus:menus, transactionType:"order"});
+                    OrderScheme.find({}, (err, schemas) => {
+                        if(err){console.log(err);} else {
+                            res.render('transactionPage/edit', {
+                                data:order,
+                                menus:menus,
+                                schemas:schemas,
+                                transactionType:"order"
+                            });
+                            
+                        }
+                    });
                 }
             });
         }
@@ -297,13 +305,18 @@ app.get('/admin/order/:id/edit',function (req,res) {
 app.put('/admin/order/:id',function (req,res) {
     var orderDetail = req.body.detail;
     var newOrderObj = req.body.query;
+    var orderType = req.body.type;
     console.log(newOrderObj);
     console.log(orderDetail);
     newOrderObj.detail = orderDetail;
-    Order.findByIdAndUpdate(req.params.id, newOrderObj, {new: true}, (err,updatedOrder)=> {
-        console.log("Updated entry for " + req.params.id);
-        console.log(updatedOrder);
-        res.redirect('/admin/order/'+req.params.id);
+    OrderScheme.findOne({name:orderType}, (err, foundScheme) => {
+        newOrderObj.type = foundScheme;
+        Order.findByIdAndUpdate(req.params.id, newOrderObj, {new: true}, (err,updatedOrder)=> {
+            if(err){console.log(err);} else {                
+                console.log("Updated entry for " + req.params.id);
+                res.redirect('/admin/order/'+req.params.id);
+            }
+        });
     });
 });
 
@@ -454,17 +467,21 @@ app.get('/admin/purchase/new',function (req,res) {
 app.post('/admin/purchase', function(req, res){
     var purchaseDetail = req.body.detail;
     var newPurchaseObj = req.body.query;
-    var purchaseDetail = req.body.type;
+    var purchaseType = req.body.type;
     //insert the var orderDetail into the Order.orderDetail property
     newPurchaseObj.detail = purchaseDetail;
     //set purchaseStatus as 0
     newPurchaseObj.status = 0;
-    PurchaseScheme.findOne({purchaseDetail}, (err, foundScheme) => {
+    //find the scheme inputed
+    PurchaseScheme.findOne({name:purchaseType}, (err, foundScheme) => {
         if(err){console.log(err);} else {
+            //insert scheme into the object
             newPurchaseObj.type = foundScheme;
             Purchase.create(newPurchaseObj, (err, newPurchase) => {
-                console.log("Created new purchase for : " + newPurchase.name);
-                res.redirect('/admin/purchase');
+                if(err){console.log(err);} else {
+                    console.log("Created new purchase for : " + newPurchase.name);
+                    res.redirect('/admin/purchase');
+                }
             });
         }
     });
@@ -493,10 +510,15 @@ app.get('/admin/purchase/:id/edit', function(req, res){
         if(err){console.log(err);} else {
             Menu.find({}, (err, menus) => {
                 if(err){console.log(err);} else {
-                    res.render('transactionPage/edit', {
-                        data : purchase,
-                        menus : menus,
-                        transactionType: "purchase"
+                    PurchaseScheme.find({}, (err, schemas) => {
+                        if(err){console.log(err);} else {
+                            res.render('transactionPage/edit', {
+                                data : purchase,
+                                menus : menus,
+                                schemas : schemas,
+                                transactionType: "purchase"
+                            });
+                        }
                     });
                 }
             });
@@ -539,13 +561,17 @@ app.put('/admin/purchase/:id/status', function(req, res){
 app.put('/admin/purchase/:id', function(req, res){
     var purchaseDetail = req.body.detail;
     var newPurchaseObj = req.body.query;
+    var purchaseType = req.body.type;
     newPurchaseObj.detail = purchaseDetail;
-    console.log(newPurchaseObj)
-    Purchase.findByIdAndUpdate(req.params.id, newPurchaseObj, {new: true}, (err,updatedOrder)=> {
-        if(err){console.log(err);} else {
-            console.log("Updated entry for " + req.params.id);
-            res.redirect('/admin/purchase/'+req.params.id);
-        }
+    console.log(newPurchaseObj);
+    PurchaseScheme.findOne({name:purchaseType}, (err, foundScheme) => {
+        newPurchaseObj.type = foundScheme;
+        Purchase.findByIdAndUpdate(req.params.id, newPurchaseObj, {new: true}, (err,updatedOrder)=> {
+            if(err){console.log(err);} else {
+                console.log("Updated entry for " + req.params.id);
+                res.redirect('/admin/purchase/'+req.params.id);
+            }
+        });
     });
 });
 

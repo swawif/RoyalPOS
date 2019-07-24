@@ -11,7 +11,7 @@
     var detailArr = Object.values(data.detail)
     var totalOrder = 0;
     for (i = 0 ; i < detailArr.length ; i++){
-        totalOrder += detailArr[i];
+        totalOrder += Number(detailArr[i]);
     }
     var totalPrice = totalOrder * data.type.price
     %>
