@@ -14,6 +14,7 @@ var express         = require("express"),
     LocalStrategy   = require('passport-local'),
     config          = require('./config.json'),
     methodOverride  = require('method-override'),
+    router          = express.Router(),
     //DB Models
     Menu            = require('./models/menu'),         // Menu DB
     Order           = require('./models/order'),        // Incoming sales order DB
@@ -61,117 +62,91 @@ app.get('/',function (req,res) {
 });
 
 // INDEX - Admin Page
-app.get('/admin',function (req,res) {
-    Menu.find({}).exec()
-    .then(menus => {
-        Purchase.find({}).exec()
-            .then(purchases => {
-                Order.find({}).exec()
-                    .then(orders => {
-                        OrderScheme.find({}).exec()
-                            .then(schemas => {
-                                getStatusTable(menus, purchases, orders)
-                                    .then(table => {
-                                        res.render('admin/index', {
-                                            menus : menus,
-                                            schemas : schemas,
-                                            upcomingOrders : table.upcomingOrders,
-                                            upcomingPurchases : table.upcomingPurchases,
-                                        });
-                                        console.log("Adding new order...");
-                                    })
-                                    .catch(err => console.log(err));
-                            })
-                            .catch(err => console.log(err));
-                    })
-                    .catch(err => console.log(err));
-            })
-            .catch(err => console.log(err));
-    })
-    .catch(err => console.log(err));
-});
+router.use('/admin', require('./routes/admin/index'));
 
 //========= MENU ROUTE =============================
-// INDEX - Menu List Page
-app.get('/admin/menu',function (req,res) {
-    Menu.find({},function(err, menus){
-        if(err){
-            console.log(err);
-        } else {
-            res.render('admin/menu', {menus:menus});
-        }
-    });
-});
+router.use('/menu', require('./routes/settings/menu'));
 
-// NEW - Submit New Menu
-app.get('/admin/menu/new',function (req,res) {
-   res.render('admin/newMenu');
-});
+// // INDEX - Menu List Page
+// app.get('/admin/menu',function (req,res) {
+//     Menu.find({},function(err, menus){
+//         if(err){
+//             console.log(err);
+//         } else {
+//             res.render('admin/menu', {menus:menus});
+//         }
+//     });
+// });
 
-// POST - Process new menu into DB
-app.post('/admin/menu',function (req,res) {
-    // Check if menu existed or not
-    var name = req.body.menu.name.toLowerCase();
-    console.log(req.body.menu);
-    Menu.findOne({
-        name: name
-    }, (err, foundMenu) => {
-        if(err){console.log(err);} else {
-            // If so, do not overwrite, render the newMenu page with error 
-            if(foundMenu){
-                // render the newMenu page with error (coming soon)
-                // res.render('admin/newMenu', {err: "menuExisted"});
-                res.redirect('/admin/menu')
-                console.log("Menu Existed! : " + foundMenu.name + ", Canceling...");
-            // If not, add the new menu to the DB
-            } else if (foundMenu === null) {
-                Menu.create(req.body.menu, function(err,newMenu){
-                    if(err){
-                        console.log(err);
-                    } else {
-                        console.log("New Menu : " + req.body.menu.name);
-                        res.redirect('/admin/menu');
-                    }
-               });
-            }
-        }
-    });
-});
+// // NEW - Submit New Menu
+// app.get('/admin/menu/new',function (req,res) {
+//    res.render('admin/newMenu');
+// });
 
-// Show/Edit
-app.get('/admin/menu/:id/edit',function (req,res) {
-    Menu.findById(req.params.id, function(err,menu) {
-        if(err){console.log(err); res.redirect('/admin/menu');} else {
-            console.log("Editing menu : " + menu.name);
-            res.render('admin/editMenu', {menu:menu});
-        }
-    });
-});
+// // POST - Process new menu into DB
+// app.post('/admin/menu',function (req,res) {
+//     // Check if menu existed or not
+//     var name = req.body.menu.name.toLowerCase();
+//     console.log(req.body.menu);
+//     Menu.findOne({
+//         name: name
+//     }, (err, foundMenu) => {
+//         if(err){console.log(err);} else {
+//             // If so, do not overwrite, render the newMenu page with error 
+//             if(foundMenu){
+//                 // render the newMenu page with error (coming soon)
+//                 // res.render('admin/newMenu', {err: "menuExisted"});
+//                 res.redirect('/admin/menu')
+//                 console.log("Menu Existed! : " + foundMenu.name + ", Canceling...");
+//             // If not, add the new menu to the DB
+//             } else if (foundMenu === null) {
+//                 Menu.create(req.body.menu, function(err,newMenu){
+//                     if(err){
+//                         console.log(err);
+//                     } else {
+//                         console.log("New Menu : " + req.body.menu.name);
+//                         res.redirect('/admin/menu');
+//                     }
+//                });
+//             }
+//         }
+//     });
+// });
 
-// Update -- TODO MAKE DUPLICATE PROTECTION
-app.put('/admin/menu/:id',function (req,res) {
-    Menu.findByIdAndUpdate(req.params.id, req.body.menu, {new: true}, (err,newMenu) => {
-        if(err){
-            console.log(err);
-        } else {
-            console.log("Updated Menu!");
-            console.log(newMenu);
-            res.redirect('/admin/menu');
-        }
-    });
-});
+// // Show/Edit
+// app.get('/admin/menu/:id/edit',function (req,res) {
+//     Menu.findById(req.params.id, function(err,menu) {
+//         if(err){console.log(err); res.redirect('/admin/menu');} else {
+//             console.log("Editing menu : " + menu.name);
+//             res.render('admin/editMenu', {menu:menu});
+//         }
+//     });
+// });
 
-// Destroy
-app.delete('/admin/menu/:id',function (req,res) {
-    Menu.findByIdAndRemove(req.params.id, (err)=>{
-        if(err){
-            console.log(err);
-        } else {
-            console.log("Deleted menu : " + req.params.id);
-            res.redirect('/admin/menu');
-        }
-    })
-});
+// // Update -- TODO MAKE DUPLICATE PROTECTION
+// app.put('/admin/menu/:id',function (req,res) {
+//     Menu.findByIdAndUpdate(req.params.id, req.body.menu, {new: true}, (err,newMenu) => {
+//         if(err){
+//             console.log(err);
+//         } else {
+//             console.log("Updated Menu!");
+//             console.log(newMenu);
+//             res.redirect('/admin/menu');
+//         }
+//     });
+// });
+
+// // Destroy
+// app.delete('/admin/menu/:id',function (req,res) {
+//     Menu.findByIdAndRemove(req.params.id, (err)=>{
+//         if(err){
+//             console.log(err);
+//         } else {
+//             console.log("Deleted menu : " + req.params.id);
+//             res.redirect('/admin/menu');
+//         }
+//     })
+// });
 
 
 //========= ORDER ROUTE ============================
