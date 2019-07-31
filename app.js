@@ -21,7 +21,9 @@ var express         = require("express"),
     Purchase        = require('./models/purchase'),     // Upcoming Purchases DB
     PurchaseScheme  = require('./models/purchaseschema'), // Purchase Type DB
     //Seeder
-    seedDB          = require('./seed');
+    seedDB          = require('./seed'),
+    //Helper
+    getStatusTable  = require('./helper/functions');
 
 //Connect to mongoDB
 mongoose.connect("mongodb://localhost/rjd_pos_alpha", {useNewUrlParser:true});
@@ -46,7 +48,7 @@ passport.deserializeUser(User.deserializeUser());
 */
 
 // Seeder
-seedDB();
+// seedDB();
 
 //==================================================
 //============== ROUTES ============================
@@ -60,12 +62,33 @@ app.get('/',function (req,res) {
 
 // INDEX - Admin Page
 app.get('/admin',function (req,res) {
-    Menu.find({}, (err,menus)=>{
-        if(err){console.log(err);} else{
-            res.render('admin/index', {menus:menus});
-            console.log("Admin Page");
-        }
-    });
+    Menu.find({}).exec()
+    .then(menus => {
+        Purchase.find({}).exec()
+            .then(purchases => {
+                Order.find({}).exec()
+                    .then(orders => {
+                        OrderScheme.find({}).exec()
+                            .then(schemas => {
+                                getStatusTable(menus, purchases, orders)
+                                    .then(table => {
+                                        res.render('admin/index', {
+                                            menus : menus,
+                                            schemas : schemas,
+                                            upcomingOrders : table.upcomingOrders,
+                                            upcomingPurchases : table.upcomingPurchases,
+                                        });
+                                        console.log("Adding new order...");
+                                    })
+                                    .catch(err => console.log(err));
+                            })
+                            .catch(err => console.log(err));
+                    })
+                    .catch(err => console.log(err));
+            })
+            .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
 });
 
 //========= MENU ROUTE =============================
@@ -168,78 +191,34 @@ app.get('/admin/order/',function (req,res) {
 
 //NEW - Submit New Order 
 app.get('/admin/order/new',function (req,res) {
-    Menu.find({}, function(err, menus){
-        if(err){console.log(err);} else {
-            Purchase.find({},(err,purchases)=> {
-                if(err){console.log(err);} else{
-                    Order.find({},(err, orders) => {
-                        if(err){console.log(err);} else {
-                            //ADD UPCOMINGORDERS
-                            var upcomingOrders = [];
-                            var upcomingPurchases = [];
-                            // check how many arrays inside menus
-                            console.log("Total menus : " + menus.length);
-                            for(i=0;i<menus.length;i++){
-                                //push as many zeros as menus array to initiate the array
-                                upcomingPurchases.push(0);
-                                upcomingOrders.push(0);
-                            }
-                            console.log("upcomingPurchases");
-                            console.log(upcomingPurchases);
-                            console.log("upcomingOrders");
-                            console.log(upcomingOrders);
-                            //Loop through orders array
-                            purchases.forEach(purchase => {
-                                //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(purchase.status < 1){
-                                    //set index
-                                    var idx = 0;
-                                    //Loop through menus array
-                                    menus.forEach(menu => {
-                                        var purchaseDetail = Number(purchase.detail[menu.name]);
-                                        //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
-                                        upcomingPurchases[idx] += purchaseDetail
-                                        idx++;
-                                    });
-                                }
-                                console.log(upcomingPurchases);
-                            });
-
-                            orders.forEach(order => {
-                                //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(order.status < 1){
-                                    //set index
-                                    var idx = 0;
-                                    //Loop through menus array
-                                    menus.forEach(menu => {
-                                        var orderDetail = Number(order.detail[menu.name]);
-                                        //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
-                                        upcomingOrders[idx] += orderDetail
-                                        idx++;
-                                    });
-                                }
-                                console.log(upcomingOrders);
-                            });
-        
-                            OrderScheme.find({},(err, schemas) => {
-                                if(err){console.log(err);} else {
-                                    res.render('transactionPage/new', {
-                                        menus : menus,
-                                        schemas : schemas,
-                                        upcomingOrders : upcomingOrders,
-                                        upcomingPurchases : upcomingPurchases,
-                                        transactionType:"order"
-                                    });
-                                    console.log("Adding new order...");
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-
-        }
-    });
+    Menu.find({}).exec()
+        .then(menus => {
+            Purchase.find({}).exec()
+                .then(purchases => {
+                    Order.find({}).exec()
+                        .then(orders => {
+                            OrderScheme.find({}).exec()
+                                .then(schemas => {
+                                    getStatusTable(menus, purchases, orders)
+                                        .then(table => {
+                                            res.render('transactionPage/new', {
+                                                menus : menus,
+                                                schemas : schemas,
+                                                upcomingOrders : table.upcomingOrders,
+                                                upcomingPurchases : table.upcomingPurchases,
+                                                transactionType : "order"
+                                            });
+                                            console.log("Adding new order...");
+                                        })
+                                        .catch(err => console.log(err));
+                                })
+                                .catch(err => console.log(err));
+                        })
+                        .catch(err => console.log(err));
+                })
+                .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
 });
 
 //CREATE
@@ -387,80 +366,38 @@ app.get('/admin/purchase',function (req,res) {
     });
 });
 
-//NEW -- ADD UPCOMINGORDERS
-app.get('/admin/purchase/new',function (req,res) {
-    Menu.find({}, function(err, menus){
-        if(err){console.log(err);} else {
-            Purchase.find({},(err,purchases)=> {
-                if(err){console.log(err);} else{
-                    Order.find({},(err, orders) => {
-                        if(err){console.log(err);} else {
-                            //ADD UPCOMINGORDERS
-                            var upcomingOrders = [];
-                            var upcomingPurchases = [];
-                            // check how many arrays inside menus
-                            console.log("Total menus : " + menus.length);
-                            for(i=0;i<menus.length;i++){
-                                //push as many zeros as menus array to initiate the array
-                                upcomingPurchases.push(0);
-                                upcomingOrders.push(0);
-                            }
-                            console.log("upcomingPurchases");
-                            console.log(upcomingPurchases);
-                            console.log("upcomingOrders");
-                            console.log(upcomingOrders);
-                            //Loop through orders array
-                            purchases.forEach(purchase => {
-                                //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(purchase.status < 1){
-                                    //set index
-                                    var idx = 0;
-                                    //Loop through menus array
-                                    menus.forEach(menu => {
-                                        var purchaseDetail = Number(purchase.detail[menu.name]);
-                                        //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
-                                        upcomingPurchases[idx] += purchaseDetail
-                                        idx++;
-                                    });
-                                }
-                                console.log(upcomingPurchases);
-                            });
+//NEW
+app.get('/admin/purchase/new', function(req, res){
 
-                            orders.forEach(order => {
-                                //check if order is still eligible to be counted (any orderStatus under 1)
-                                if(order.status < 1){
-                                    //set index
-                                    var idx = 0;
-                                    //Loop through menus array
-                                    menus.forEach(menu => {
-                                        var orderDetail = Number(order.detail[menu.name]);
-                                        //on every itteration, add the orderDetail with the same key as menu.name to the upcomingOrder array
-                                        upcomingOrders[idx] += orderDetail
-                                        idx++;
-                                    });
-                                }
-                                console.log(upcomingOrders);
-                            });
+    Menu.find({}).exec()
+        .then(menus => {
+            Purchase.find({}).exec()
+                .then(purchases => {
+                    Order.find({}).exec()
+                        .then(orders => {
+                            OrderScheme.find({}).exec()
+                                .then(schemas => {
+                                    getStatusTable(menus, purchases, orders)
+                                        .then(table => {
+                                            res.render('transactionPage/new', {
+                                                menus : menus,
+                                                schemas : schemas,
+                                                upcomingOrders : table.upcomingOrders,
+                                                upcomingPurchases : table.upcomingPurchases,
+                                                transactionType : "purchase"
+                                            });
+                                            console.log("Adding new order...");
+                                        })
+                                        .catch(err => console.log(err));
+                                })
+                                .catch(err => console.log(err));
+                        })
+                        .catch(err => console.log(err));
+                })
+                .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
         
-                            PurchaseScheme.find({},(err, schemas) => {
-                                if(err){console.log(err);} else {
-                                    res.render('transactionPage/new', {
-                                        menus : menus,
-                                        schemas : schemas,
-                                        upcomingOrders : upcomingOrders,
-                                        upcomingPurchases : upcomingPurchases,
-                                        transactionType : "purchase"
-                                    });
-                                    console.log("Adding new order...");
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-
-        }
-    });
 });
 
 //CREATE

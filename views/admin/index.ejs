@@ -6,28 +6,61 @@
 
     <table class="table">
         <tr>
+            <td>Rasa</td>
             <% menus.forEach(function(menu){%>
-            <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
-            <%});%>
+                <th style="background-color: <%=menu.color%>;"><%=menu.name.substring(0,3).toUpperCase()%></th>
+                <%});%>
         </tr>
         <tr>
+            <td></td>
             <% menus.forEach(function(menu){%>
                 <td><%=menu.emoji%></td>
             <%});%>
         </tr>
+        
         <tr>
+            <td>Stok<br>Saat Ini</td>
+            <% var menuArr = []; %>
             <% menus.forEach(function(menu){%>
-                <td><%=menu.stock%></td>
+                <td><strong><%=menu.stock%></strong></td>
+                <% menuArr.push(menu.stock) %>
             <%});%>
         </tr>
-        </table>
-</div>
+        <!-- Incoming Orders -->
+        <tr>
+            <% upcomingOrderArr = []; %>
+            <td>Pesanan<br>Customer</td>
+            <% upcomingOrders.forEach(function(upcomingOrder){%>
+                <td style="color: red"><%=upcomingOrder%></td>
+                <% upcomingOrderArr.push(upcomingOrder) %>
+            <%});%>
+        </tr>
 
-<ul>
-    <li><a href="/admin/order/new">Buat Pesanan baru</a></li>
-    <li>Daftar Pesanan</li>
-    <li>Tambah Rasa</li>
-</ul>
+        <!-- Incoming Purchases -->
+        <tr>
+            <td>Stok<br>Akan Datang</td>
+            <% upcomingPurchaseArr = []; %>
+            <% upcomingPurchases.forEach(function(upcomingPurchase){%>
+                <td><%=upcomingPurchase%></td>
+                <% upcomingPurchaseArr.push(upcomingPurchase) %>
+            <%});%>
+        </tr>
+
+        <!-- Next Stock -->
+        <tr>
+            <td>Next Stock</td>
+            <% 
+            var nextStocks = [];
+            for(i=0; i < menuArr.length; i++){
+                var stock = menuArr[i] - upcomingOrderArr[i] + upcomingPurchaseArr[i];
+                nextStocks.push(stock);
+            }
+            nextStocks.forEach(function (nextStock) { %>
+                <td><strong><%= nextStock %></strong></td>
+            <% }); %>
+        </tr>
+
+</div>
 
 
 <% include ../partials/footer %>
