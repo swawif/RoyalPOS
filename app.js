@@ -26,6 +26,10 @@ var express         = require("express"),
     //Helper
     getStatusTable  = require('./helper/functions');
 
+var indexLoginRoute = require('./routes/index-login'),
+    adminRoute      = require('./routes/admin/index'),
+    menuSetRoute    = require('./routes/admin/settings/menu')
+
 //Connect to mongoDB
 mongoose.connect("mongodb://localhost/rjd_pos_alpha", {useNewUrlParser:true});
 
@@ -56,98 +60,13 @@ passport.deserializeUser(User.deserializeUser());
 //==================================================
 
 // INDEX - Universal Login Page
-app.get('/',function (req,res) {
-   res.render('login');
-   console.log("login page");
-});
+app.use(indexLoginRoute);
 
-// INDEX - Admin Page
-router.use('/admin', require('./routes/admin/index'));
+// Admin Index Page
+app.use("/admin", adminRoute);
 
-//========= MENU ROUTE =============================
-router.use('/menu', require('./routes/settings/menu'));
-
-// // INDEX - Menu List Page
-// app.get('/admin/menu',function (req,res) {
-//     Menu.find({},function(err, menus){
-//         if(err){
-//             console.log(err);
-//         } else {
-//             res.render('admin/menu', {menus:menus});
-//         }
-//     });
-// });
-
-// // NEW - Submit New Menu
-// app.get('/admin/menu/new',function (req,res) {
-//    res.render('admin/newMenu');
-// });
-
-// // POST - Process new menu into DB
-// app.post('/admin/menu',function (req,res) {
-//     // Check if menu existed or not
-//     var name = req.body.menu.name.toLowerCase();
-//     console.log(req.body.menu);
-//     Menu.findOne({
-//         name: name
-//     }, (err, foundMenu) => {
-//         if(err){console.log(err);} else {
-//             // If so, do not overwrite, render the newMenu page with error 
-//             if(foundMenu){
-//                 // render the newMenu page with error (coming soon)
-//                 // res.render('admin/newMenu', {err: "menuExisted"});
-//                 res.redirect('/admin/menu')
-//                 console.log("Menu Existed! : " + foundMenu.name + ", Canceling...");
-//             // If not, add the new menu to the DB
-//             } else if (foundMenu === null) {
-//                 Menu.create(req.body.menu, function(err,newMenu){
-//                     if(err){
-//                         console.log(err);
-//                     } else {
-//                         console.log("New Menu : " + req.body.menu.name);
-//                         res.redirect('/admin/menu');
-//                     }
-//                });
-//             }
-//         }
-//     });
-// });
-
-// // Show/Edit
-// app.get('/admin/menu/:id/edit',function (req,res) {
-//     Menu.findById(req.params.id, function(err,menu) {
-//         if(err){console.log(err); res.redirect('/admin/menu');} else {
-//             console.log("Editing menu : " + menu.name);
-//             res.render('admin/editMenu', {menu:menu});
-//         }
-//     });
-// });
-
-// // Update -- TODO MAKE DUPLICATE PROTECTION
-// app.put('/admin/menu/:id',function (req,res) {
-//     Menu.findByIdAndUpdate(req.params.id, req.body.menu, {new: true}, (err,newMenu) => {
-//         if(err){
-//             console.log(err);
-//         } else {
-//             console.log("Updated Menu!");
-//             console.log(newMenu);
-//             res.redirect('/admin/menu');
-//         }
-//     });
-// });
-
-// // Destroy
-// app.delete('/admin/menu/:id',function (req,res) {
-//     Menu.findByIdAndRemove(req.params.id, (err)=>{
-//         if(err){
-//             console.log(err);
-//         } else {
-//             console.log("Deleted menu : " + req.params.id);
-//             res.redirect('/admin/menu');
-//         }
-//     })
-// });
-
+// Menu Settings route
+app.use("/admin/settings/menu", menuSetRoute);
 
 //========= ORDER ROUTE ============================
 
@@ -495,10 +414,10 @@ app.delete('/admin/purchase/:id', function(req, res){
 });
 
 
-//404 Handler
-app.get('/*',function (req,res) {
-   res.send("404, not found!")
-});
+// //404 Handler
+// app.get('/*',function (req,res) {
+//    res.send("404, not found!")
+// });
 
 //Port Listener
 var port = 3000;

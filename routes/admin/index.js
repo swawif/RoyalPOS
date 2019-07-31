@@ -1,5 +1,10 @@
 const express = require('express'),
-      router = express.Router()
+      router = express.Router(),
+      Menu = require('../../models/menu'),
+      Purchase = require('../../models/purchase'),
+      Order = require('../../models/order'),
+      OrderScheme = require('../../models/orderschema'),
+      getStatusTable = require('../../helper/functions')
 
 router.get('/',function (req,res) {
         Menu.find({}).exec()

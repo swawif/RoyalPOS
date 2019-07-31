@@ -1,5 +1,6 @@
 const express = require('express'),
-      router = express.Router()
+      router = express.Router(),
+      Menu  = require('../../../models/menu');
 
 // INDEX - Menu List Page
 router.get('/',function (req,res) {
@@ -30,7 +31,7 @@ router.post('/',function (req,res) {
             if(foundMenu){
                 // render the newMenu page with error (coming soon)
                 // res.render('admin/newMenu', {err: "menuExisted"});
-                res.redirect('/admin/menu')
+                res.redirect('/admin/settings/menu')
                 console.log("Menu Existed! : " + foundMenu.name + ", Canceling...");
             // If not, add the new menu to the DB
             } else if (foundMenu === null) {
@@ -39,7 +40,7 @@ router.post('/',function (req,res) {
                         console.log(err);
                     } else {
                         console.log("New Menu : " + req.body.menu.name);
-                        res.redirect('/admin/menu');
+                        res.redirect('/admin/settings/menu');
                     }
                });
             }
@@ -50,7 +51,7 @@ router.post('/',function (req,res) {
 // Show/Edit
 router.get('/:id/edit',function (req,res) {
     Menu.findById(req.params.id, function(err,menu) {
-        if(err){console.log(err); res.redirect('/admin/menu');} else {
+        if(err){console.log(err); res.redirect('/admin/settings/menu');} else {
             console.log("Editing menu : " + menu.name);
             res.render('admin/editMenu', {menu:menu});
         }
@@ -65,7 +66,7 @@ router.put('/:id',function (req,res) {
         } else {
             console.log("Updated Menu!");
             console.log(newMenu);
-            res.redirect('/admin/menu');
+            res.redirect('/admin/settings/menu');
         }
     });
 });
@@ -77,7 +78,7 @@ router.delete('/:id',function (req,res) {
             console.log(err);
         } else {
             console.log("Deleted menu : " + req.params.id);
-            res.redirect('/admin/menu');
+            res.redirect('/admin/settings/menu');
         }
     })
 });

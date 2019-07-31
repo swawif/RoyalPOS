@@ -2,7 +2,7 @@
 
 <h1>Submit New Menu</h1>
 
-<form action="/admin/menu/<%=menu._id%>?_method=PUT" method="POST" >
+<form action="/admin/settings/menu/<%=menu._id%>?_method=PUT" method="POST" >
     <input type="text" name="menu[name]" value="<%=menu.name%>" placeholder="Nama Menu" required>
     <input type="text" name="menu[emoji]" value="<%=menu.emoji%>" placeholder="Choose emoji" required>
     <label for="stock"></label>

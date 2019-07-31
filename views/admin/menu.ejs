@@ -9,12 +9,12 @@ Daftar Menu
 <ul>
     <%menus.forEach(function(menu){%>
         <li>
-            <%=menu.emoji%> - <%=capitalize(menu.name)%> - <%=menu.stock%> - <a href="/admin/menu/<%=menu._id%>/edit">Edit</a>
-            <form method="POST" action="/admin/menu/<%=menu._id%>?_method=DELETE"> <button>Delete</button>
+            <%=menu.emoji%> - <%=capitalize(menu.name)%> - <%=menu.stock%> - <a href="/admin/settings/menu/<%=menu._id%>/edit">Edit</a>
+            <form method="POST" action="/admin/settings/menu/<%=menu._id%>?_method=DELETE"> <button>Delete</button>
             </form>
         </li>
         <%})%>
 </ul>
-<a href="/admin/menu/new">Submit New Menu</a>
+<a href="/admin/settings/menu/new">Submit New Menu</a>
 
 <% include ../partials/footer%>
