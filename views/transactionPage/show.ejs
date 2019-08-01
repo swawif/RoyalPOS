@@ -59,7 +59,7 @@ var totalPrice = totalOrder * data.type.price
                     Pesanan terkirim</p>
                     <!-- <a href="#" class="btn btn-primary">Konfirmasi Selesai</a> -->
                     <form action="/admin/<%=url%>/<%=data._id%>/status?_method=PUT" method="POST">
-                        <button class="btn btn-success">Konfirmasi Selesai</button>
+                        <button class="btn btn-success loading-btn">Konfirmasi Selesai</button>
                     </form>
                     <%break;%>
                 <%case 3 :%>
@@ -74,8 +74,7 @@ var totalPrice = totalOrder * data.type.price
                 <button class="btn btn-danger">Hapus Pesanan</button>
             </form>
 
-            <a class="btn btn-default" href="/admin/<%=url%>/<%=data._id%>/edit">Edit</a>
-
+            <a class="btn btn-default loading-btn" href="/admin/<%=url%>/<%=data._id%>/edit">Edit</a>
         </div>
     
 </div>
