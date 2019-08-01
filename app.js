@@ -1,6 +1,7 @@
 // بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
 //TODOS
 // Status Update : After click, button should be disabled to prevent multiple status update. (which did happened)
+// Menu - Updating/Creating new stock will set number as NaN in the Upcoming order table
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
 // /admin/setting/schemas
 // make an auto whatsapp converter

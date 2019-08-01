@@ -35,7 +35,10 @@ router.post('/',function (req,res) {
                 console.log("Menu Existed! : " + foundMenu.name + ", Canceling...");
             // If not, add the new menu to the DB
             } else if (foundMenu === null) {
-                Menu.create(req.body.menu, function(err,newMenu){
+                //ensure the stock is submited as number
+                submitMenuObj = req.body.menu;
+                submitMenuObj.stock = Number(submitMenuObj.stock);
+                Menu.create(submitMenuObj, function(err,newMenu){
                     if(err){
                         console.log(err);
                     } else {
