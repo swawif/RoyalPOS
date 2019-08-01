@@ -47,7 +47,7 @@ passport.deserializeUser(User.deserializeUser());
 */
 
 // Seeder
-seedDB();
+// seedDB();
 
 //==================================================
 //============== ROUTES ============================
