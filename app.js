@@ -3,6 +3,7 @@
 // Status Update : After click, button should be disabled to prevent multiple status update. (which did happened)
 // Menu - Updating/Creating menu name will make previous stock invalid.
 //          > change input system from using menu.name to instead use menu._id to make it future proof
+//          > getStatusTable() > set NaN to 0
 
 // MENU - Update -- TODO MAKE DUPLICATE PROTECTION
 // /admin/setting/schemas
