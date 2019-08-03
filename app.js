@@ -30,7 +30,7 @@ var indexLoginRoute = require('./routes/index-login'),
     purchaseRoute   = require('./routes/admin/purchase')
 
 //Connect to mongoDB
-mongoose.connect("mongodb://localhost/rjd_pos_alpha", {useNewUrlParser:true});
+mongoose.connect("mongodb+srv://" + config.mongoUser + ":" + config.mongoPass + "@royal-pos-e6puk.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser:true});
 
 //===== App Config ======
 app.use(bodyParser.urlencoded({extended:true}));
@@ -69,7 +69,7 @@ app.get('/*',function (req,res) {
 });
 
 //Port Listener
-var port = 3000;
+var port = process.env.PORT || 8080;
 app.listen(port, function(){
 console.log('rjdPOS is listening on port ' + port);
 });
