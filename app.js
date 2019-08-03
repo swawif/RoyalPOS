@@ -30,7 +30,7 @@ var indexLoginRoute = require('./routes/index-login'),
     purchaseRoute   = require('./routes/admin/purchase')
 
 //Connect to mongoDB
-mongoose.connect("mongodb+srv://" + config.mongoUser + ":" + config.mongoPass + "@royal-pos-e6puk.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser:true});
+mongoose.connect("mongodb+srv://" + process.env.mongoUser + ":" + process.env.mongoPass + "@royal-pos-e6puk.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser:true});
 
 //===== App Config ======
 app.use(bodyParser.urlencoded({extended:true}));
