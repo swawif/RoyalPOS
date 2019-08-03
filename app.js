@@ -17,7 +17,7 @@ var express         = require("express"),
     mongoose        = require('mongoose'),
     passport        = require('passport'),
     LocalStrategy   = require('passport-local'),
-    config          = require('./config.json'),
+    // config          = require('./config.json'),
     methodOverride  = require('method-override'),
     router          = express.Router(),
     //Seeder
