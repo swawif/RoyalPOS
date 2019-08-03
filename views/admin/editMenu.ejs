@@ -3,10 +3,11 @@
 <h1>Submit New Menu</h1>
 
 <form action="/admin/settings/menu/<%=menu._id%>?_method=PUT" method="POST" >
-    <input type="text" name="menu[name]" value="<%=menu.name%>" placeholder="Nama Menu" required>
+    <input type="text" name="menu[name]" value="<%=menu.name%>" placeholder="Nama Menu" required disabled>
     <input type="text" name="menu[emoji]" value="<%=menu.emoji%>" placeholder="Choose emoji" required>
     <label for="stock"></label>
     <input type="number" name="menu[stock]" value="<%=menu.stock%>" id="stock" required disabled>
+    <input id="color" type="color" name="menu[color]" value="<%=menu.color%>">
     <button class="btn btn-default loading-btn">submit</button>
 </form>
 
