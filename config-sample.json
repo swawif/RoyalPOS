@@ -1,4 +1,6 @@
 {
-    "secret": "",
-    "storePhoneNum": 628121212121212
+    "secret"        : "",
+    "storePhoneNum" : 6281212121212121,
+    "mongoUser"     : "user",
+    "mongoPass"     : "pass"
 }
