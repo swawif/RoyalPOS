@@ -1,0 +1,6 @@
+{
+    "secret"        : "kerensekaliinisecret",
+    "storePhoneNum" : 6281212493669,
+    "mongoUser"     : process.env.mongoUser,
+    "mongoPass"     : process.env.mongoPass
+}
